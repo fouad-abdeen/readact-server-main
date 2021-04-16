@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,16 +35,62 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+exports.__esModule = true;
+// Mongoose Models
 var UserModel = require("../Models/User");
+// Messages
+var _MESSAGES = require("../Messages/Messages");
+var _LANGUAGE = require("../Messages/Language");
 var DALC = /** @class */ (function () {
     function DALC() {
         var _this = this;
-        this.create_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var user, userDoc, error_1;
+        // #region User
+        this.get_users = function () { return __awaiter(_this, void 0, void 0, function () {
+            var users, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        user = req.body;
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, UserModel.find({})];
+                    case 1:
+                        users = _a.sent();
+                        return [2 /*return*/, users];
+                    case 2:
+                        error_1 = _a.sent();
+                        return [2 /*return*/, error_1.message];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.get_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
+            var user, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, UserModel.findOne({ _id: user_id })];
+                    case 1:
+                        user = _a.sent();
+                        return [2 /*return*/, user];
+                    case 2:
+                        error_2 = _a.sent();
+                        return [2 /*return*/, error_2.message];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.create_user = function (user) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, userDoc, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -51,14 +98,67 @@ var DALC = /** @class */ (function () {
                         return [4 /*yield*/, userDoc.save()];
                     case 2:
                         _a.sent();
-                        return [2 /*return*/, "User created successfully"];
+                        return [2 /*return*/, USER.SUCCESSFULL_CREATION];
                     case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, error_1.message];
+                        error_3 = _a.sent();
+                        return [2 /*return*/, error_3.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
+        this.edit_user = function (user_id, user) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER;
+            return __generator(this, function (_a) {
+                LAN = _LANGUAGE.getLanguage();
+                if (LAN === "AR") {
+                    USER = _MESSAGES.AR.USER;
+                }
+                else {
+                    USER = _MESSAGES.EN.USER;
+                }
+                try {
+                    UserModel.findByIdAndUpdate({ _id: user_id }, user, {
+                        "new": true
+                    }, function (err) {
+                        if (err) {
+                            throw new Error(err);
+                        }
+                    });
+                    return [2 /*return*/, USER.SUCCESSFULL_UPDATE];
+                }
+                catch (error) {
+                    return [2 /*return*/, error.message];
+                }
+                return [2 /*return*/];
+            });
+        }); };
+        this.delete_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, user, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, UserModel.findOneAndRemove({ _id: user_id })];
+                    case 2:
+                        user = _a.sent();
+                        return [2 /*return*/, "" + user.username + USER.SUCCESSFULL_DELETETION];
+                    case 3:
+                        error_4 = _a.sent();
+                        return [2 /*return*/, error_4.message];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        // #endregion
     }
     return DALC;
 }());

@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
+"use strict";
 
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const CreateUserSchema = new Schema(
+const UserSchema = new Schema(
   {
     username: {
       type: String,
@@ -14,7 +15,7 @@ const CreateUserSchema = new Schema(
       type: String,
       required: true,
     },
-    user_type_id: { type: Schema.ObjectId, ref: "user_type" },
+    user_type_id: { type: Number, required: true },
     location_id: { type: Schema.ObjectId, ref: "location" },
     first_name_en: String,
     first_name_ar: String,
@@ -31,5 +32,5 @@ const CreateUserSchema = new Schema(
   { timestamps: true }
 );
 
-const CreateUser = mongoose.model("users", CreateUserSchema);
-module.exports = CreateUser;
+const User = mongoose.model("users", UserSchema);
+module.exports = User;

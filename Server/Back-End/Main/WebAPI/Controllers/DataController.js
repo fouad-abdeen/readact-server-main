@@ -35,11 +35,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _this = this;
-var _BLC = require("../../BLC/BLC");
-var routes = require("../Routes");
-var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser;
 var express = require("express");
 var router = express.Router();
+// Names of Routes
+var routes = require("../Routes");
+var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser;
+// Business Logic Component
+var _BLC = require("../../BLC/BLC");
+// Language for Business Rules' Messages
+var _LANGUAGE = require("../../Messages/Language");
+// #region Functions
+// #region User
 var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var oBLC, users, error_1;
     return __generator(this, function (_a) {
@@ -47,7 +53,7 @@ var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 oBLC = new _BLC();
-                return [4 /*yield*/, oBLC.get_all_users(req)];
+                return [4 /*yield*/, oBLC.get_all_users()];
             case 1:
                 users = _a.sent();
                 res.send(users);
@@ -62,17 +68,52 @@ var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0
         }
     });
 }); };
-var get_user = function (req, res) {
-    try {
-    }
-    catch (error) {
-        res.status(500).send({
-            message: error.message || "Some error occured while retrieving the User"
-        });
-    }
-};
+var get_some_users = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, users, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.get_some_users(req)];
+            case 1:
+                users = _a.sent();
+                res.send(users);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                res.status(500).send({
+                    message: error_2.message || "Some error occured while retrieving Users"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var get_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, user, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.get_user(req)];
+            case 1:
+                user = _a.sent();
+                res.send(user);
+                return [3 /*break*/, 3];
+            case 2:
+                error_3 = _a.sent();
+                res.status(500).send({
+                    message: error_3.message || "Some error occured while retrieving the User"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 var create_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, user_status, error_2;
+    var oBLC, user_status, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -84,16 +125,86 @@ var create_user = function (req, res) { return __awaiter(_this, void 0, void 0, 
                 res.send(user_status);
                 return [3 /*break*/, 3];
             case 2:
-                error_2 = _a.sent();
+                error_4 = _a.sent();
                 res.status(500).send({
-                    message: error_2.message || "Some error occured while creating the User"
+                    message: error_4.message || "Some error occured while creating the User"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
+var edit_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, user_status, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.edit_user(req)];
+            case 1:
+                user_status = _a.sent();
+                res.send(user_status);
+                return [3 /*break*/, 3];
+            case 2:
+                error_5 = _a.sent();
+                res.status(500).send({
+                    message: error_5.message || "Some error occured while updating your data"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var delete_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, user_status, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.delete_user(req)];
+            case 1:
+                user_status = _a.sent();
+                res.send(user_status);
+                return [3 /*break*/, 3];
+            case 2:
+                error_6 = _a.sent();
+                res.status(500).send({
+                    message: error_6.message || "Some error occured while deleting User account"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+// #endregion
+// #endregion
+// #region HTTP Methods
+// #region User
 router.get("/" + getAllUsers, get_all_users);
+router.get("/" + getSomeUsers, get_some_users);
 router.get("/" + getUser, get_user);
 router.post("/" + createUser, create_user);
+router.put("/" + editUser, edit_user);
+router["delete"]("/" + deleteUser, delete_user);
+// #endregion
+// #region Language
+router.post("/" + routes.changeLanguage, function (req, res) {
+    var language = req.body.language;
+    if (language !== "EN" && language !== "AR") {
+        throw new Error("Invalid Request!");
+    }
+    try {
+        _LANGUAGE.init(language);
+        res.send("Language changed to " + _LANGUAGE.getLanguage());
+    }
+    catch (error) {
+        res.status(500).send({
+            message: error.message || "Some error occured while changing the language"
+        });
+    }
+});
+// #endregion
+// #endregion
 module.exports = router;
