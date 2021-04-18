@@ -7,9 +7,10 @@ const routes = {
     editUser: "editUser",
     deleteUser: "deleteUser",
     changePassword: "changePassword",
+    requestVerificationCode: "requestVerificationCode",
     getUserTypes: "getAllUserTypes",
     changeUserType: "changeUserType",
-    changeLocation: "changeLocation"
+    changeLocation: "changeLocation",
   },
   changeLanguage: "changeLanguage",
 };

@@ -40,6 +40,7 @@ exports.__esModule = true;
 var UserModel = require("../Models/User");
 var UserTypeModel = require("../Models/UserType");
 var LocationModel = require("../Models/Location");
+var VerificationCodeModel = require("../Models/AccountVerificationCode");
 // Messages
 var _MESSAGES = require("../Messages/Messages");
 var _LANGUAGE = require("../Messages/Language");
@@ -265,6 +266,43 @@ var DALC = /** @class */ (function () {
                     return [2 /*return*/, error.message];
                 }
                 return [2 /*return*/];
+            });
+        }); };
+        this.request_verification_code = function (user_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, VerficationCodeDoc, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        VerficationCodeDoc = new VerificationCodeModel({
+                            user_id: user_id,
+                            email_address: email_address,
+                            code: code,
+                            request_date: request_date
+                        });
+                        return [4 /*yield*/, VerficationCodeDoc.save()];
+                    case 2:
+                        _a.sent();
+                        UserModel.findByIdAndUpdate({ _id: user_id }, { is_verification_requested: true }, function (err) {
+                            if (err) {
+                                throw new Error(err);
+                            }
+                        });
+                        return [2 /*return*/, USER.SUCCESSFULL_VERIF_CODE_REQUEST];
+                    case 3:
+                        error_6 = _a.sent();
+                        return [2 /*return*/, error_6.message];
+                    case 4: return [2 /*return*/];
+                }
             });
         }); };
         // #endregion

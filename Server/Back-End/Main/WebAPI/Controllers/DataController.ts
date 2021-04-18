@@ -14,6 +14,7 @@ const {
   getUserTypes,
   changeUserType,
   changeLocation,
+  requestVerificationCode,
 } = routes.user;
 
 // Business Logic Component
@@ -154,6 +155,20 @@ const change_password = async (req, res) => {
     });
   }
 };
+
+const request_verification_code = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const request_status = await oBLC.request_verification_code(req);
+    res.send(request_status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message ||
+        "Some error occured while requesting your account verification code",
+    });
+  }
+};
 // #endregion
 
 // #endregion
@@ -168,6 +183,7 @@ router.post("/" + createUser, create_user);
 router.put("/" + editUser, edit_user);
 router.delete("/" + deleteUser, delete_user);
 router.put("/" + changePassword, change_password);
+router.post("/" + requestVerificationCode, request_verification_code);
 router.get("/" + getUserTypes, get_all_user_types);
 router.put("/" + changeUserType, change_user_type);
 router.put("/" + changeLocation, change_location);

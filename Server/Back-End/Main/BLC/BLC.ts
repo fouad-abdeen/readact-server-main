@@ -1,5 +1,6 @@
 export {};
 const validator = require("validator");
+const moment = require("moment");
 
 // Data Access Layer Component
 const _DALC = require("../DALC/DALC");
@@ -8,12 +9,14 @@ const _DALC = require("../DALC/DALC");
 const _MESSAGES = require("../Messages/Messages");
 const _LANGUAGE = require("../Messages/Language");
 
+// Code Generator for Account Verification & Password Reset
+const _CODE_GENERATOR = require("./CodeGenerator");
+
 // User Types Ids
 const _ID = require("./UserTypes");
 
 // Mongoose Models
 const UserModel = require("../Models/User");
-const UserTypeModel = require("../Models/UserType");
 
 class BLC {
   //  #region User
@@ -239,6 +242,7 @@ class BLC {
     const firstNameAr = currentUser.first_name_ar;
     const lastNameEn = currentUser.last_name_en;
     const lastNameAr = currentUser.last_name_ar;
+    const user_type_id = currentUser.user_type_id;
 
     await UserModel.findById(user_id).exec();
 
@@ -257,11 +261,32 @@ class BLC {
       typeof currentUser.full_address_ar !== "string"
     ) {
       throw new Error(USER.ADDRESS);
+    } else if (
+      currentUser.email_address !== currentUser.email_address_confirmation
+    ) {
+      throw new Error(USER.EMAIL_CONFIRMATION);
     } else {
-      delete currentUser["_id"];
-      delete currentUser["password"];
-      delete currentUser["user_type_id"];
-      delete currentUser["location_id"];
+      if (user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin) {
+        delete currentUser["_id"];
+        delete currentUser["password"];
+        delete currentUser["email_address_confirmation"];
+        delete currentUser["user_type_id"];
+        delete currentUser["location_id"];
+      } else {
+        delete currentUser["_id"];
+        delete currentUser["password"];
+        delete currentUser["email_address_confirmation"];
+        delete currentUser["user_type_id"];
+      }
+    }
+
+    const user_data = await UserModel.findById(user_id).exec();
+    const isVerified = user_data.is_verified;
+
+    if (isVerified === false) {
+      currentUser["is_verified"] = false;
+      currentUser["is_verification_requested"] = false;
+      currentUser["is_profile_completed"] = true;
     }
 
     try {
@@ -305,6 +330,49 @@ class BLC {
     try {
       const oDALC = new _DALC();
       const status = await oDALC.change_password(user_id, currentUser);
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  };
+
+  request_verification_code = async (req) => {
+    const LAN = _LANGUAGE.getLanguage();
+    let USER;
+
+    if (LAN === "AR") {
+      USER = _MESSAGES.AR.USER;
+    } else {
+      USER = _MESSAGES.EN.USER;
+    }
+
+    const user = req.body;
+    const user_id = user.user_id;
+    const user_data = await UserModel.findById(user_id).exec();
+
+    const isVerified = user_data.is_verified;
+    const isVerificationRequested = user_data.is_verification_requested;
+    const isProfileCompleted = user_data.is_profile_completed;
+
+    if (!isProfileCompleted) {
+      throw new Error(USER.ICOMPLETE_PROFILE);
+    } else if (isVerificationRequested && !isVerified) {
+      throw new Error(USER.REQUESTED_VERIFICATION);
+    } else if (isVerified) {
+      throw new Error(USER.VERIFIED_ACCOUNT);
+    }
+
+    const code = await _CODE_GENERATOR(user.first_name_en, user.last_name_en);
+    const date = moment();
+
+    try {
+      const oDALC = new _DALC();
+      const status = await oDALC.request_verification_code(
+        user_id,
+        user.email_address,
+        code,
+        date
+      );
       return status;
     } catch (error) {
       return error.message;

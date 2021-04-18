@@ -37,16 +37,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var validator = require("validator");
+var moment = require("moment");
 // Data Access Layer Component
 var _DALC = require("../DALC/DALC");
 // Business Rules' Messages
 var _MESSAGES = require("../Messages/Messages");
 var _LANGUAGE = require("../Messages/Language");
+// Code Generator for Account Verification & Password Reset
+var _CODE_GENERATOR = require("./CodeGenerator");
 // User Types Ids
 var _ID = require("./UserTypes");
 // Mongoose Models
 var UserModel = require("../Models/User");
-var UserTypeModel = require("../Models/UserType");
 var BLC = /** @class */ (function () {
     function BLC() {
         var _this = this;
@@ -324,7 +326,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.edit_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, user_id, user, isValidEmail, isValidMobileNumber, firstNameEn, firstNameAr, lastNameEn, lastNameAr, oDALC, status_5, error_9;
+            var LAN, USER, currentUser, user_id, user, isValidEmail, isValidMobileNumber, firstNameEn, firstNameAr, lastNameEn, lastNameAr, user_type_id, user_data, isVerified, oDALC, status_5, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -348,6 +350,7 @@ var BLC = /** @class */ (function () {
                         firstNameAr = currentUser.first_name_ar;
                         lastNameEn = currentUser.last_name_en;
                         lastNameAr = currentUser.last_name_ar;
+                        user_type_id = currentUser.user_type_id;
                         return [4 /*yield*/, UserModel.findById(user_id).exec()];
                     case 2:
                         _a.sent();
@@ -370,24 +373,45 @@ var BLC = /** @class */ (function () {
                             typeof currentUser.full_address_ar !== "string") {
                             throw new Error(USER.ADDRESS);
                         }
-                        else {
-                            delete currentUser["_id"];
-                            delete currentUser["password"];
-                            delete currentUser["user_type_id"];
-                            delete currentUser["location_id"];
+                        else if (currentUser.email_address !== currentUser.email_address_confirmation) {
+                            throw new Error(USER.EMAIL_CONFIRMATION);
                         }
-                        _a.label = 3;
+                        else {
+                            if (user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin) {
+                                delete currentUser["_id"];
+                                delete currentUser["password"];
+                                delete currentUser["email_address_confirmation"];
+                                delete currentUser["user_type_id"];
+                                delete currentUser["location_id"];
+                            }
+                            else {
+                                delete currentUser["_id"];
+                                delete currentUser["password"];
+                                delete currentUser["email_address_confirmation"];
+                                delete currentUser["user_type_id"];
+                            }
+                        }
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
                     case 3:
-                        _a.trys.push([3, 5, , 6]);
+                        user_data = _a.sent();
+                        isVerified = user_data.is_verified;
+                        if (isVerified === false) {
+                            currentUser["is_verified"] = false;
+                            currentUser["is_verification_requested"] = false;
+                            currentUser["is_profile_completed"] = true;
+                        }
+                        _a.label = 4;
+                    case 4:
+                        _a.trys.push([4, 6, , 7]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.edit_user(user_id, currentUser)];
-                    case 4:
+                    case 5:
                         status_5 = _a.sent();
                         return [2 /*return*/, status_5];
-                    case 5:
+                    case 6:
                         error_9 = _a.sent();
                         return [2 /*return*/, error_9.message];
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };
@@ -438,6 +462,54 @@ var BLC = /** @class */ (function () {
                         error_10 = _a.sent();
                         return [2 /*return*/, error_10.message];
                     case 5: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.request_verification_code = function (req) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, code, date, oDALC, status_7, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        user = req.body;
+                        user_id = user.user_id;
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 1:
+                        user_data = _a.sent();
+                        isVerified = user_data.is_verified;
+                        isVerificationRequested = user_data.is_verification_requested;
+                        isProfileCompleted = user_data.is_profile_completed;
+                        if (!isProfileCompleted) {
+                            throw new Error(USER.ICOMPLETE_PROFILE);
+                        }
+                        else if (isVerificationRequested && !isVerified) {
+                            throw new Error(USER.REQUESTED_VERIFICATION);
+                        }
+                        else if (isVerified) {
+                            throw new Error(USER.VERIFIED_ACCOUNT);
+                        }
+                        return [4 /*yield*/, _CODE_GENERATOR(user.first_name_en, user.last_name_en)];
+                    case 2:
+                        code = _a.sent();
+                        date = moment();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        oDALC = new _DALC();
+                        return [4 /*yield*/, oDALC.request_verification_code(user_id, user.email_address, code, date)];
+                    case 4:
+                        status_7 = _a.sent();
+                        return [2 /*return*/, status_7];
+                    case 5:
+                        error_11 = _a.sent();
+                        return [2 /*return*/, error_11.message];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };

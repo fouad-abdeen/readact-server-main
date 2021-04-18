@@ -39,7 +39,7 @@ var express = require("express");
 var router = express.Router();
 // Names of Routes
 var routes = require("../Names.Routes");
-var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser, changePassword = _a.changePassword, getUserTypes = _a.getUserTypes, changeUserType = _a.changeUserType, changeLocation = _a.changeLocation;
+var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser, changePassword = _a.changePassword, getUserTypes = _a.getUserTypes, changeUserType = _a.changeUserType, changeLocation = _a.changeLocation, requestVerificationCode = _a.requestVerificationCode;
 // Business Logic Component
 var _BLC = require("../../BLC/BLC");
 // Language for Messages
@@ -270,6 +270,29 @@ var change_password = function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); };
+var request_verification_code = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, request_status, error_11;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.request_verification_code(req)];
+            case 1:
+                request_status = _a.sent();
+                res.send(request_status);
+                return [3 /*break*/, 3];
+            case 2:
+                error_11 = _a.sent();
+                res.status(500).send({
+                    message: error_11.message ||
+                        "Some error occured while requesting your account verification code"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 // #endregion
 // #endregion
 // #region Routes
@@ -281,6 +304,7 @@ router.post("/" + createUser, create_user);
 router.put("/" + editUser, edit_user);
 router["delete"]("/" + deleteUser, delete_user);
 router.put("/" + changePassword, change_password);
+router.post("/" + requestVerificationCode, request_verification_code);
 router.get("/" + getUserTypes, get_all_user_types);
 router.put("/" + changeUserType, change_user_type);
 router.put("/" + changeLocation, change_location);
