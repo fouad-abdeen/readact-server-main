@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const UserTypeSchema = new Schema({
-  custom_id: { type: Number, required: true, unique: true },
+const LocationSchema = new Schema({
   title_en: { type: String, required: true, unique: true },
   title_ar: { type: String, required: true, unique: true },
 });
 
-const UserType = mongoose.model("user_types", UserTypeSchema);
-module.exports = UserType;
+const Location = mongoose.model("locations", LocationSchema);
+module.exports = Location;

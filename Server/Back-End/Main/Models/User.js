@@ -1,5 +1,3 @@
-"use strict";
-
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -16,7 +14,7 @@ const UserSchema = new Schema(
       required: true,
     },
     user_type_id: { type: Number, required: true },
-    location_id: { type: Schema.ObjectId, ref: "location" },
+    location_id: { type: Schema.ObjectId, ref: "locations", required: true },
     first_name_en: String,
     first_name_ar: String,
     last_name_en: String,

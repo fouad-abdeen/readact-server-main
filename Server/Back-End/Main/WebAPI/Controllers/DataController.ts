@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Names of Routes
-const routes = require("../Routes");
+const routes = require("../Names.Routes");
 const {
   createUser,
   getAllUsers,
@@ -10,21 +10,40 @@ const {
   getUser,
   editUser,
   deleteUser,
+  changePassword,
+  getUserTypes,
+  changeUserType,
+  changeLocation,
 } = routes.user;
 
 // Business Logic Component
 const _BLC = require("../../BLC/BLC");
 
-// Language for Business Rules' Messages
+// Language for Messages
 const _LANGUAGE = require("../../Messages/Language");
 
-// #region Functions
+// #region Controllers
 
 // #region User
-const get_all_users = async (req, res) => {
+const get_all_user_types = async (req, res) => {
   try {
     const oBLC = new _BLC();
-    const users = await oBLC.get_all_users();
+    const user_types = await oBLC.get_all_user_types();
+    res.send(user_types);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message ||
+        "Some error occured while retrieving User account's types",
+    });
+  }
+};
+
+// #region Admin Privileges
+const get_some_users = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const users = await oBLC.get_some_users(req);
     res.send(users);
   } catch (error) {
     res.status(500).send({
@@ -33,10 +52,64 @@ const get_all_users = async (req, res) => {
   }
 };
 
-const get_some_users = async (req, res) => {
+const create_user = async (req, res) => {
   try {
     const oBLC = new _BLC();
-    const users = await oBLC.get_some_users(req);
+    const user_status = await oBLC.create_user(req);
+    res.send(user_status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while creating the User account",
+    });
+  }
+};
+
+const delete_user = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const user_status = await oBLC.delete_user(req);
+    res.send(user_status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while deleting the User account",
+    });
+  }
+};
+
+const change_user_type = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const status = await oBLC.change_user_type(req);
+    res.send(status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message ||
+        "Some error occured while changing User account's type",
+    });
+  }
+};
+
+const change_location = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const status = await oBLC.change_location(req);
+    res.send(status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while changing User's location",
+    });
+  }
+};
+// #endregion
+
+const get_all_users = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const users = await oBLC.get_all_users();
     res.send(users);
   } catch (error) {
     res.status(500).send({
@@ -52,19 +125,7 @@ const get_user = async (req, res) => {
     res.send(user);
   } catch (error) {
     res.status(500).send({
-      message: error.message || "Some error occured while retrieving the User",
-    });
-  }
-};
-
-const create_user = async (req, res) => {
-  try {
-    const oBLC = new _BLC();
-    const user_status = await oBLC.create_user(req);
-    res.send(user_status);
-  } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while creating the User",
+      message: error.message || "Some error occured while retrieving your data",
     });
   }
 };
@@ -81,15 +142,15 @@ const edit_user = async (req, res) => {
   }
 };
 
-const delete_user = async (req, res) => {
+const change_password = async (req, res) => {
   try {
     const oBLC = new _BLC();
-    const user_status = await oBLC.delete_user(req);
-    res.send(user_status);
+    const password_status = await oBLC.change_password(req);
+    res.send(password_status);
   } catch (error) {
     res.status(500).send({
       message:
-        error.message || "Some error occured while deleting User account",
+        error.message || "Some error occured while changing your password",
     });
   }
 };
@@ -97,7 +158,7 @@ const delete_user = async (req, res) => {
 
 // #endregion
 
-// #region HTTP Methods
+// #region Routes
 
 // #region User
 router.get("/" + getAllUsers, get_all_users);
@@ -106,6 +167,10 @@ router.get("/" + getUser, get_user);
 router.post("/" + createUser, create_user);
 router.put("/" + editUser, edit_user);
 router.delete("/" + deleteUser, delete_user);
+router.put("/" + changePassword, change_password);
+router.get("/" + getUserTypes, get_all_user_types);
+router.put("/" + changeUserType, change_user_type);
+router.put("/" + changeLocation, change_location);
 // #endregion
 
 // #region Language

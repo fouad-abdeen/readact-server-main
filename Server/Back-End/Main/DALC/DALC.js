@@ -38,6 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 // Mongoose Models
 var UserModel = require("../Models/User");
+var UserTypeModel = require("../Models/UserType");
+var LocationModel = require("../Models/Location");
 // Messages
 var _MESSAGES = require("../Messages/Messages");
 var _LANGUAGE = require("../Messages/Language");
@@ -62,16 +64,16 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
-        this.get_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
-            var user, error_2;
+        this.get_all_user_types = function () { return __awaiter(_this, void 0, void 0, function () {
+            var user_types, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserModel.findOne({ _id: user_id })];
+                        return [4 /*yield*/, UserTypeModel.find({})];
                     case 1:
-                        user = _a.sent();
-                        return [2 /*return*/, user];
+                        user_types = _a.sent();
+                        return [2 /*return*/, user_types];
                     case 2:
                         error_2 = _a.sent();
                         return [2 /*return*/, error_2.message];
@@ -79,6 +81,7 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
+        // #region Admin Privileges
         this.create_user = function (user) { return __awaiter(_this, void 0, void 0, function () {
             var LAN, USER, userDoc, error_3;
             return __generator(this, function (_a) {
@@ -103,6 +106,114 @@ var DALC = /** @class */ (function () {
                         error_3 = _a.sent();
                         return [2 /*return*/, error_3.message];
                     case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.delete_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, user, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, UserModel.findOneAndRemove({ _id: user_id })];
+                    case 2:
+                        user = _a.sent();
+                        return [2 /*return*/, "" + user.username + USER.SUCCESSFULL_DELETETION];
+                    case 3:
+                        error_4 = _a.sent();
+                        return [2 /*return*/, error_4.message];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.change_user_type = function (user_id, user_type) { return __awaiter(_this, void 0, void 0, function () {
+            var UserType, LAN, USER, USER_TYPE_TITLE;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, UserTypeModel.findOne({
+                            custom_id: user_type
+                        }).exec()];
+                    case 1:
+                        UserType = _a.sent();
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                            USER_TYPE_TITLE = UserType.title_ar;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                            USER_TYPE_TITLE = UserType.title_en;
+                        }
+                        try {
+                            UserModel.findByIdAndUpdate({ _id: user_id }, { user_type_id: user_type }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            });
+                            return [2 /*return*/, USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE];
+                        }
+                        catch (error) {
+                            return [2 /*return*/, error.message];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.change_location = function (user_id, location) { return __awaiter(_this, void 0, void 0, function () {
+            var Location, LAN, USER, LOCATION_TITLE;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, LocationModel.findById({ _id: location }).exec()];
+                    case 1:
+                        Location = _a.sent();
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                            LOCATION_TITLE = Location.title_ar;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                            LOCATION_TITLE = Location.title_en;
+                        }
+                        try {
+                            UserModel.findByIdAndUpdate({ _id: user_id }, { location_id: location }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            });
+                            return [2 /*return*/, USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE];
+                        }
+                        catch (error) {
+                            return [2 /*return*/, error.message];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        // #endregion
+        this.get_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
+            var user, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, UserModel.findOne({ _id: user_id })];
+                    case 1:
+                        user = _a.sent();
+                        return [2 /*return*/, user];
+                    case 2:
+                        error_5 = _a.sent();
+                        return [2 /*return*/, error_5.message];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
@@ -132,30 +243,28 @@ var DALC = /** @class */ (function () {
                 return [2 /*return*/];
             });
         }); };
-        this.delete_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, error_4;
+        this.change_password = function (user_id, user) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        LAN = _LANGUAGE.getLanguage();
-                        if (LAN === "AR") {
-                            USER = _MESSAGES.AR.USER;
-                        }
-                        else {
-                            USER = _MESSAGES.EN.USER;
-                        }
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, UserModel.findOneAndRemove({ _id: user_id })];
-                    case 2:
-                        user = _a.sent();
-                        return [2 /*return*/, "" + user.username + USER.SUCCESSFULL_DELETETION];
-                    case 3:
-                        error_4 = _a.sent();
-                        return [2 /*return*/, error_4.message];
-                    case 4: return [2 /*return*/];
+                LAN = _LANGUAGE.getLanguage();
+                if (LAN === "AR") {
+                    USER = _MESSAGES.AR.USER;
                 }
+                else {
+                    USER = _MESSAGES.EN.USER;
+                }
+                try {
+                    UserModel.findByIdAndUpdate({ _id: user_id }, user, function (err) {
+                        if (err) {
+                            throw new Error(err);
+                        }
+                    });
+                    return [2 /*return*/, USER.SUCCESSFULL_PASSWORD_CHANGE];
+                }
+                catch (error) {
+                    return [2 /*return*/, error.message];
+                }
+                return [2 /*return*/];
             });
         }); };
         // #endregion
