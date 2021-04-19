@@ -11,6 +11,7 @@ const AccountVerificationCodeSchema = new Schema({
   email_address: { type: String, required: true, unique: true },
   code: { type: String, required: true, unique: true },
   request_date: { type: Date, required: true },
+  is_expired: { type: Boolean, required: true },
 });
 
 const AccountVerificationCode = mongoose.model(

@@ -49,6 +49,7 @@ var _CODE_GENERATOR = require("./CodeGenerator");
 var _ID = require("./UserTypes");
 // Mongoose Models
 var UserModel = require("../Models/User");
+var VerificationCodeModel = require("../Models/AccountVerificationCode");
 var BLC = /** @class */ (function () {
     function BLC() {
         var _this = this;
@@ -505,11 +506,73 @@ var BLC = /** @class */ (function () {
                         return [4 /*yield*/, oDALC.request_verification_code(user_id, user.email_address, code, date)];
                     case 4:
                         status_7 = _a.sent();
+                        // Send verification code by email
                         return [2 /*return*/, status_7];
                     case 5:
                         error_11 = _a.sent();
                         return [2 /*return*/, error_11.message];
                     case 6: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.verify_account = function (req) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, user, user_id, verfication_request, code, isExpired, date, now, difference, user_data, isVerified, oDALC, status_8, error_12;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        user = req.body;
+                        user_id = user._id;
+                        return [4 /*yield*/, VerificationCodeModel.findOne({
+                                user_id: user_id
+                            }).exec()];
+                    case 1:
+                        verfication_request = _a.sent();
+                        code = verfication_request.code;
+                        isExpired = verfication_request.is_expired;
+                        date = verfication_request.request_date;
+                        if (!(code !== user.code)) return [3 /*break*/, 2];
+                        throw new Error(USER.VERIFICATION_CODE);
+                    case 2:
+                        if (!isExpired) return [3 /*break*/, 3];
+                        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
+                    case 3:
+                        now = moment();
+                        difference = now.diff(date, "hours");
+                        if (!(difference > 48)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, VerificationCodeModel.findOneAndUpdate({ code: code }, { is_expired: true }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            })];
+                    case 4:
+                        _a.sent();
+                        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
+                    case 5: return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 6:
+                        user_data = _a.sent();
+                        isVerified = user_data.is_verified;
+                        if (isVerified) {
+                            throw new Error(USER.VERIFIED_ACCOUNT);
+                        }
+                        _a.label = 7;
+                    case 7:
+                        _a.trys.push([7, 9, , 10]);
+                        oDALC = new _DALC();
+                        return [4 /*yield*/, oDALC.verify_account(user_id)];
+                    case 8:
+                        status_8 = _a.sent();
+                        return [2 /*return*/, status_8];
+                    case 9:
+                        error_12 = _a.sent();
+                        return [2 /*return*/, error_12.message];
+                    case 10: return [2 /*return*/];
                 }
             });
         }); };

@@ -15,6 +15,8 @@ const MESSAGES = {
       REQUESTED_VERIFICATION:
         "You've requested the account verification code before now! Please check your email inbox.",
       VERIFIED_ACCOUNT: "Your account is already verified!",
+      VERIFICATION_CODE: "Invalid Verification Code!",
+      EXPIRED_VERIFICATION_CODE: "Your account verification code is expired!",
       USER_TYPE_ID: "Invalid User Account's Type!",
       USERS_LIST: "You have no privilege to retrieve users list!",
       USER_CREATION: "You have no privilege to create a user account!",
@@ -43,8 +45,10 @@ const MESSAGES = {
       SUCCESSFULL_USER_TYPE_CHANGE:
         "User account's type changed successfully to ",
       SUCCESSFULL_LOCATION_CHANGE: "User's location changed successfully to ",
-      SUCCESSFULL_VERIF_CODE_REQUEST: `Your account verification code has been successfully requested.
-        Please check your email inbox and enter the code within 48 hours.`,
+      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `Your account verification code has been successfully requested.
+      Please check your email inbox and enter the code within 48 hours.`,
+      SUCCESSFULL_ACCOUNT_VERIFICATION:
+        "Your account is verified successfully.",
     },
   },
   AR: {
@@ -61,6 +65,8 @@ const MESSAGES = {
       REQUESTED_VERIFICATION:
         "لقد طالبت( ِ) برمز تغعيل حسابك( ِ) من قبل، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
       VERIFIED_ACCOUNT: "حسابك مفعل من قبل",
+      VERIFICATION_CODE: "رمز تفعيل الحساب غير صالح",
+      EXPIRED_VERIFICATION_CODE: "إن رمز تفعيل حسابك( ِ) منتهي الصلاحية",
       USER_TYPE_ID: "نوع حساب المستخدم غير صالح",
       USERS_LIST: "ليست لديك( ِ) الصلاحية للحصول على اللائحة بالمستخدمين",
       USER_CREATION: "ليست لديك( ِ) الصلاحية لإضافة حساب المستخدم",
@@ -84,8 +90,9 @@ const MESSAGES = {
       SUCCESSFULL_DELETETION: " تمت بنجاح عملبة حذف حساب",
       SUCCESSFULL_USER_TYPE_CHANGE: "تم تعديل نوع حساب المستخدم بنجاح إلى ",
       SUCCESSFULL_LOCATION_CHANGE: "تم تعديل موقع المستخدم إلى ",
-      SUCCESSFULL_VERIF_CODE_REQUEST: `تم طلب رمز تفعيل حسابك( ِ) بنجاح
+      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `تم طلب رمز تفعيل حسابك( ِ) بنجاح
       رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
+      SUCCESSFULL_ACCOUNT_VERIFICATION: "تم تفعيل حسابك( ِ) بنجاح",
     },
   },
 };

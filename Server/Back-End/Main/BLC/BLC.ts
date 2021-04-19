@@ -17,6 +17,7 @@ const _ID = require("./UserTypes");
 
 // Mongoose Models
 const UserModel = require("../Models/User");
+const VerificationCodeModel = require("../Models/AccountVerificationCode");
 
 class BLC {
   //  #region User
@@ -373,6 +374,67 @@ class BLC {
         code,
         date
       );
+
+      // Send verification code by email
+
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  };
+
+  verify_account = async (req) => {
+    const LAN = _LANGUAGE.getLanguage();
+    let USER;
+
+    if (LAN === "AR") {
+      USER = _MESSAGES.AR.USER;
+    } else {
+      USER = _MESSAGES.EN.USER;
+    }
+
+    const user = req.body;
+    const user_id = user._id;
+    const verfication_request = await VerificationCodeModel.findOne({
+      user_id,
+    }).exec();
+    const code = verfication_request.code;
+    const isExpired = verfication_request.is_expired;
+    const date = verfication_request.request_date;
+
+    if (code !== user.code) {
+      throw new Error(USER.VERIFICATION_CODE);
+    } else if (isExpired) {
+      throw new Error(USER.EXPIRED_VERIFICATION_CODE);
+    } else {
+      const now = moment();
+      const difference = now.diff(date, "hours");
+
+      if (difference > 48) {
+        await VerificationCodeModel.findOneAndUpdate(
+          { code },
+          { is_expired: true },
+          (err) => {
+            if (err) {
+              throw new Error(err);
+            }
+          }
+        );
+
+        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
+      }
+
+      const user_data = await UserModel.findById(user_id).exec();
+      const isVerified = user_data.is_verified;
+
+      if (isVerified) {
+        throw new Error(USER.VERIFIED_ACCOUNT);
+      }
+    }
+
+    try {
+      const oDALC = new _DALC();
+      const status = await oDALC.verify_account(user_id);
       return status;
     } catch (error) {
       return error.message;

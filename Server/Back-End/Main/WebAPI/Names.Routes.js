@@ -8,6 +8,7 @@ const routes = {
     deleteUser: "deleteUser",
     changePassword: "changePassword",
     requestVerificationCode: "requestVerificationCode",
+    verifyAccount: "verifyAccount",
     getUserTypes: "getAllUserTypes",
     changeUserType: "changeUserType",
     changeLocation: "changeLocation",

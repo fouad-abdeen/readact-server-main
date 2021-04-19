@@ -1,6 +1,8 @@
+"use strict";
+
 const moment = require("moment");
 
-const code_generator = (first_name, last_name) => {
+const generate_code = (first_name, last_name) => {
   if (typeof first_name !== "string") {
     throw new Error("Invalid First Name!");
   } else if (typeof last_name !== "string") {
@@ -32,4 +34,4 @@ const code_generator = (first_name, last_name) => {
   }
 };
 
-module.exports = code_generator;
+module.exports = generate_code;

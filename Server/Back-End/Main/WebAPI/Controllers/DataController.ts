@@ -15,6 +15,7 @@ const {
   changeUserType,
   changeLocation,
   requestVerificationCode,
+  verifyAccount,
 } = routes.user;
 
 // Business Logic Component
@@ -169,6 +170,19 @@ const request_verification_code = async (req, res) => {
     });
   }
 };
+
+const verify_account = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const verification_status = await oBLC.verify_account(req);
+    res.send(verification_status);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while verifiying your account",
+    });
+  }
+};
 // #endregion
 
 // #endregion
@@ -184,6 +198,7 @@ router.put("/" + editUser, edit_user);
 router.delete("/" + deleteUser, delete_user);
 router.put("/" + changePassword, change_password);
 router.post("/" + requestVerificationCode, request_verification_code);
+router.put("/" + verifyAccount, verify_account);
 router.get("/" + getUserTypes, get_all_user_types);
 router.put("/" + changeUserType, change_user_type);
 router.put("/" + changeLocation, change_location);

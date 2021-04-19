@@ -110,7 +110,7 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
-        this.delete_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
+        this.delete_user = function (_id) { return __awaiter(_this, void 0, void 0, function () {
             var LAN, USER, user, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -125,7 +125,7 @@ var DALC = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, UserModel.findOneAndRemove({ _id: user_id })];
+                        return [4 /*yield*/, UserModel.findOneAndRemove({ _id: _id })];
                     case 2:
                         user = _a.sent();
                         return [2 /*return*/, "" + user.username + USER.SUCCESSFULL_DELETETION];
@@ -136,12 +136,12 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
-        this.change_user_type = function (user_id, user_type) { return __awaiter(_this, void 0, void 0, function () {
-            var UserType, LAN, USER, USER_TYPE_TITLE;
+        this.change_user_type = function (_id, user_type_id) { return __awaiter(_this, void 0, void 0, function () {
+            var UserType, LAN, USER, USER_TYPE_TITLE, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, UserTypeModel.findOne({
-                            custom_id: user_type
+                            custom_id: user_type_id
                         }).exec()];
                     case 1:
                         UserType = _a.sent();
@@ -154,26 +154,29 @@ var DALC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                             USER_TYPE_TITLE = UserType.title_en;
                         }
-                        try {
-                            UserModel.findByIdAndUpdate({ _id: user_id }, { user_type_id: user_type }, function (err) {
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { user_type_id: user_type_id }, function (err) {
                                 if (err) {
                                     throw new Error(err);
                                 }
-                            });
-                            return [2 /*return*/, USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE];
-                        }
-                        catch (error) {
-                            return [2 /*return*/, error.message];
-                        }
-                        return [2 /*return*/];
+                            })];
+                    case 3:
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE];
+                    case 4:
+                        error_5 = _a.sent();
+                        return [2 /*return*/, error_5.message];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
-        this.change_location = function (user_id, location) { return __awaiter(_this, void 0, void 0, function () {
-            var Location, LAN, USER, LOCATION_TITLE;
+        this.change_location = function (_id, location_id) { return __awaiter(_this, void 0, void 0, function () {
+            var Location, LAN, USER, LOCATION_TITLE, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, LocationModel.findById({ _id: location }).exec()];
+                    case 0: return [4 /*yield*/, LocationModel.findById({ _id: location_id }).exec()];
                     case 1:
                         Location = _a.sent();
                         LAN = _LANGUAGE.getLanguage();
@@ -185,91 +188,44 @@ var DALC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                             LOCATION_TITLE = Location.title_en;
                         }
-                        try {
-                            UserModel.findByIdAndUpdate({ _id: user_id }, { location_id: location }, function (err) {
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { location_id: location_id }, function (err) {
                                 if (err) {
                                     throw new Error(err);
                                 }
-                            });
-                            return [2 /*return*/, USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE];
-                        }
-                        catch (error) {
-                            return [2 /*return*/, error.message];
-                        }
-                        return [2 /*return*/];
+                            })];
+                    case 3:
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE];
+                    case 4:
+                        error_6 = _a.sent();
+                        return [2 /*return*/, error_6.message];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
         // #endregion
-        this.get_user = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
-            var user, error_5;
+        this.get_user = function (_id) { return __awaiter(_this, void 0, void 0, function () {
+            var user, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserModel.findOne({ _id: user_id })];
+                        return [4 /*yield*/, UserModel.findOne({ _id: _id })];
                     case 1:
                         user = _a.sent();
                         return [2 /*return*/, user];
                     case 2:
-                        error_5 = _a.sent();
-                        return [2 /*return*/, error_5.message];
+                        error_7 = _a.sent();
+                        return [2 /*return*/, error_7.message];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
-        this.edit_user = function (user_id, user) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER;
-            return __generator(this, function (_a) {
-                LAN = _LANGUAGE.getLanguage();
-                if (LAN === "AR") {
-                    USER = _MESSAGES.AR.USER;
-                }
-                else {
-                    USER = _MESSAGES.EN.USER;
-                }
-                try {
-                    UserModel.findByIdAndUpdate({ _id: user_id }, user, {
-                        "new": true
-                    }, function (err) {
-                        if (err) {
-                            throw new Error(err);
-                        }
-                    });
-                    return [2 /*return*/, USER.SUCCESSFULL_UPDATE];
-                }
-                catch (error) {
-                    return [2 /*return*/, error.message];
-                }
-                return [2 /*return*/];
-            });
-        }); };
-        this.change_password = function (user_id, user) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER;
-            return __generator(this, function (_a) {
-                LAN = _LANGUAGE.getLanguage();
-                if (LAN === "AR") {
-                    USER = _MESSAGES.AR.USER;
-                }
-                else {
-                    USER = _MESSAGES.EN.USER;
-                }
-                try {
-                    UserModel.findByIdAndUpdate({ _id: user_id }, user, function (err) {
-                        if (err) {
-                            throw new Error(err);
-                        }
-                    });
-                    return [2 /*return*/, USER.SUCCESSFULL_PASSWORD_CHANGE];
-                }
-                catch (error) {
-                    return [2 /*return*/, error.message];
-                }
-                return [2 /*return*/];
-            });
-        }); };
-        this.request_verification_code = function (user_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, VerficationCodeDoc, error_6;
+        this.edit_user = function (_id, user) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -283,24 +239,119 @@ var DALC = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, user, {
+                                "new": true
+                            }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_UPDATE];
+                    case 3:
+                        error_8 = _a.sent();
+                        return [2 /*return*/, error_8.message];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.change_password = function (_id, user) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, user, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_PASSWORD_CHANGE];
+                    case 3:
+                        error_9 = _a.sent();
+                        return [2 /*return*/, error_9.message];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.request_verification_code = function (_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, VerficationCodeDoc, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
                         VerficationCodeDoc = new VerificationCodeModel({
-                            user_id: user_id,
+                            _id: _id,
                             email_address: email_address,
                             code: code,
-                            request_date: request_date
+                            request_date: request_date,
+                            is_expired: false
                         });
                         return [4 /*yield*/, VerficationCodeDoc.save()];
                     case 2:
                         _a.sent();
-                        UserModel.findByIdAndUpdate({ _id: user_id }, { is_verification_requested: true }, function (err) {
-                            if (err) {
-                                throw new Error(err);
-                            }
-                        });
-                        return [2 /*return*/, USER.SUCCESSFULL_VERIF_CODE_REQUEST];
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { is_verification_requested: true }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            })];
                     case 3:
-                        error_6 = _a.sent();
-                        return [2 /*return*/, error_6.message];
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST];
+                    case 4:
+                        error_10 = _a.sent();
+                        return [2 /*return*/, error_10.message];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.verify_account = function (_id) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { is_verified: true }, function (err) {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, USER.SUCCESSFULL_ACCOUNT_VERIFICATION];
+                    case 3:
+                        error_11 = _a.sent();
+                        return [2 /*return*/, error_11.message];
                     case 4: return [2 /*return*/];
                 }
             });

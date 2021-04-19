@@ -49,7 +49,7 @@ class DALC {
     }
   };
 
-  delete_user = async (user_id) => {
+  delete_user = async (_id) => {
     const LAN = _LANGUAGE.getLanguage();
     let USER;
 
@@ -60,16 +60,16 @@ class DALC {
     }
 
     try {
-      const user = await UserModel.findOneAndRemove({ _id: user_id });
+      const user = await UserModel.findOneAndRemove({ _id });
       return `${user.username}${USER.SUCCESSFULL_DELETETION}`;
     } catch (error) {
       return error.message;
     }
   };
 
-  change_user_type = async (user_id, user_type) => {
+  change_user_type = async (_id, user_type_id) => {
     const UserType = await UserTypeModel.findOne({
-      custom_id: user_type,
+      custom_id: user_type_id,
     }).exec();
     const LAN = _LANGUAGE.getLanguage();
     let USER, USER_TYPE_TITLE;
@@ -83,23 +83,19 @@ class DALC {
     }
 
     try {
-      UserModel.findByIdAndUpdate(
-        { _id: user_id },
-        { user_type_id: user_type },
-        (err) => {
-          if (err) {
-            throw new Error(err);
-          }
+      await UserModel.findByIdAndUpdate({ _id }, { user_type_id }, (err) => {
+        if (err) {
+          throw new Error(err);
         }
-      );
+      });
       return USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE;
     } catch (error) {
       return error.message;
     }
   };
 
-  change_location = async (user_id, location) => {
-    const Location = await LocationModel.findById({ _id: location }).exec();
+  change_location = async (_id, location_id) => {
+    const Location = await LocationModel.findById({ _id: location_id }).exec();
     const LAN = _LANGUAGE.getLanguage();
     let USER, LOCATION_TITLE;
 
@@ -112,15 +108,11 @@ class DALC {
     }
 
     try {
-      UserModel.findByIdAndUpdate(
-        { _id: user_id },
-        { location_id: location },
-        (err) => {
-          if (err) {
-            throw new Error(err);
-          }
+      await UserModel.findByIdAndUpdate({ _id }, { location_id }, (err) => {
+        if (err) {
+          throw new Error(err);
         }
-      );
+      });
       return USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE;
     } catch (error) {
       return error.message;
@@ -128,16 +120,16 @@ class DALC {
   };
   // #endregion
 
-  get_user = async (user_id) => {
+  get_user = async (_id) => {
     try {
-      const user = await UserModel.findOne({ _id: user_id });
+      const user = await UserModel.findOne({ _id });
       return user;
     } catch (error) {
       return error.message;
     }
   };
 
-  edit_user = async (user_id, user) => {
+  edit_user = async (_id, user) => {
     const LAN = _LANGUAGE.getLanguage();
     let USER;
 
@@ -148,8 +140,8 @@ class DALC {
     }
 
     try {
-      UserModel.findByIdAndUpdate(
-        { _id: user_id },
+      await UserModel.findByIdAndUpdate(
+        { _id },
         user,
         {
           new: true,
@@ -166,7 +158,7 @@ class DALC {
     }
   };
 
-  change_password = async (user_id, user) => {
+  change_password = async (_id, user) => {
     const LAN = _LANGUAGE.getLanguage();
     let USER;
 
@@ -177,7 +169,7 @@ class DALC {
     }
 
     try {
-      UserModel.findByIdAndUpdate({ _id: user_id }, user, (err) => {
+      await UserModel.findByIdAndUpdate({ _id }, user, (err) => {
         if (err) {
           throw new Error(err);
         }
@@ -189,7 +181,7 @@ class DALC {
   };
 
   request_verification_code = async (
-    user_id,
+    _id,
     email_address,
     code,
     request_date
@@ -205,15 +197,16 @@ class DALC {
 
     try {
       const VerficationCodeDoc = new VerificationCodeModel({
-        user_id,
+        _id,
         email_address,
         code,
         request_date,
+        is_expired: false,
       });
       await VerficationCodeDoc.save();
 
-      UserModel.findByIdAndUpdate(
-        { _id: user_id },
+      await UserModel.findByIdAndUpdate(
+        { _id },
         { is_verification_requested: true },
         (err) => {
           if (err) {
@@ -222,7 +215,34 @@ class DALC {
         }
       );
 
-      return USER.SUCCESSFULL_VERIF_CODE_REQUEST;
+      return USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST;
+    } catch (error) {
+      return error.message;
+    }
+  };
+
+  verify_account = async (_id) => {
+    const LAN = _LANGUAGE.getLanguage();
+    let USER;
+
+    if (LAN === "AR") {
+      USER = _MESSAGES.AR.USER;
+    } else {
+      USER = _MESSAGES.EN.USER;
+    }
+
+    try {
+      await UserModel.findByIdAndUpdate(
+        { _id },
+        { is_verified: true },
+        (err) => {
+          if (err) {
+            throw new Error(err);
+          }
+        }
+      );
+
+      return USER.SUCCESSFULL_ACCOUNT_VERIFICATION;
     } catch (error) {
       return error.message;
     }
