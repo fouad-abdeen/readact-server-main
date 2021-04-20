@@ -83,8 +83,8 @@ var DALC = /** @class */ (function () {
             });
         }); };
         // #region Admin Privileges
-        this.create_user = function (user) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, userDoc, error_3;
+        this.create_user = function (user, password) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, newUser, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -98,8 +98,9 @@ var DALC = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        userDoc = new UserModel(user);
-                        return [4 /*yield*/, userDoc.save()];
+                        newUser = new UserModel(user);
+                        newUser.setPassword(password);
+                        return [4 /*yield*/, newUser.save()];
                     case 2:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_CREATION];
@@ -256,8 +257,8 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
-        this.change_password = function (_id, user) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, error_9;
+        this.change_password = function (_id, password) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, newPassword, salt, hash, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -271,11 +272,10 @@ var DALC = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, user, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
+                        newPassword = new UserModel();
+                        newPassword.setPassword(password);
+                        salt = newPassword.salt, hash = newPassword.hash;
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { salt: salt, hash: hash })];
                     case 2:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_PASSWORD_CHANGE];

@@ -68,12 +68,13 @@ class BLC {
     }
 
     const user = req.body;
+    const password = user.password;
     const user_id = req.body.user_id;
     const user_type_id = req.body.user_type_id;
     const username = await UserModel.findOne({
       username: user.username,
     }).exec();
-    const isStrongPassword = validator.isStrongPassword(user.password);
+    const isStrongPassword = validator.isStrongPassword(password);
     const IDs = Object.values(_ID);
 
     if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
@@ -90,7 +91,7 @@ class BLC {
 
     try {
       const oDALC = new _DALC();
-      const status = await oDALC.create_user(user);
+      const status = await oDALC.create_user(user, password);
       return status;
     } catch (error) {
       return error.message;
@@ -311,26 +312,30 @@ class BLC {
 
     const currentUser = req.body;
     const user_id = currentUser._id;
+    const oldPassword = currentUser.password_check;
+    const newPassword = currentUser.password;
     const user = await UserModel.findById(user_id).exec();
-    const isStrongPassword = validator.isStrongPassword(currentUser.password);
+    const isValidPassword = user.validPassword(oldPassword);
+    const isStrongPassword = validator.isStrongPassword(newPassword);
 
-    if (currentUser.password_check !== user.password) {
+    if (!isValidPassword) {
       throw new Error(USER.PASSWORD_CHECK);
-    } else if (currentUser.password !== currentUser.password_confirmation) {
+    } else if (newPassword !== currentUser.password_confirmation) {
       throw new Error(USER.PASSWORD_CONFIRMATION);
-    } else if (currentUser.password_check === currentUser.password) {
+    } else if (oldPassword === newPassword) {
       throw new Error(USER.PASSWORD_UNCHANGED);
     } else if (!isStrongPassword) {
       throw new Error(USER.PASSWORD);
     } else {
       delete currentUser["_id"];
       delete currentUser["password_check"];
+      delete currentUser["password"];
       delete currentUser["password_confirmation"];
     }
 
     try {
       const oDALC = new _DALC();
-      const status = await oDALC.change_password(user_id, currentUser);
+      const status = await oDALC.change_password(user_id, newPassword);
       return status;
     } catch (error) {
       return error.message;

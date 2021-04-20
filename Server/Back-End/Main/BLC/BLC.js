@@ -105,7 +105,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.create_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_type_id, username, isStrongPassword, IDs, oDALC, status_1, error_3;
+            var LAN, USER, user, password, user_id, user_type_id, username, isStrongPassword, IDs, oDALC, status_1, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -117,6 +117,7 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         user = req.body;
+                        password = user.password;
                         user_id = req.body.user_id;
                         user_type_id = req.body.user_type_id;
                         return [4 /*yield*/, UserModel.findOne({
@@ -124,7 +125,7 @@ var BLC = /** @class */ (function () {
                             }).exec()];
                     case 1:
                         username = _a.sent();
-                        isStrongPassword = validator.isStrongPassword(user.password);
+                        isStrongPassword = validator.isStrongPassword(password);
                         IDs = Object.values(_ID);
                         if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
                             throw new Error(USER.USER_CREATION);
@@ -145,7 +146,7 @@ var BLC = /** @class */ (function () {
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.create_user(user)];
+                        return [4 /*yield*/, oDALC.create_user(user, password)];
                     case 3:
                         status_1 = _a.sent();
                         return [2 /*return*/, status_1];
@@ -417,7 +418,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.change_password = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, user_id, user, isStrongPassword, oDALC, status_6, error_10;
+            var LAN, USER, currentUser, user_id, oldPassword, newPassword, user, isValidPassword, isStrongPassword, oDALC, status_6, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -430,17 +431,20 @@ var BLC = /** @class */ (function () {
                         }
                         currentUser = req.body;
                         user_id = currentUser._id;
+                        oldPassword = currentUser.password_check;
+                        newPassword = currentUser.password;
                         return [4 /*yield*/, UserModel.findById(user_id).exec()];
                     case 1:
                         user = _a.sent();
-                        isStrongPassword = validator.isStrongPassword(currentUser.password);
-                        if (currentUser.password_check !== user.password) {
+                        isValidPassword = user.validPassword(oldPassword);
+                        isStrongPassword = validator.isStrongPassword(newPassword);
+                        if (!isValidPassword) {
                             throw new Error(USER.PASSWORD_CHECK);
                         }
-                        else if (currentUser.password !== currentUser.password_confirmation) {
+                        else if (newPassword !== currentUser.password_confirmation) {
                             throw new Error(USER.PASSWORD_CONFIRMATION);
                         }
-                        else if (currentUser.password_check === currentUser.password) {
+                        else if (oldPassword === newPassword) {
                             throw new Error(USER.PASSWORD_UNCHANGED);
                         }
                         else if (!isStrongPassword) {
@@ -449,13 +453,14 @@ var BLC = /** @class */ (function () {
                         else {
                             delete currentUser["_id"];
                             delete currentUser["password_check"];
+                            delete currentUser["password"];
                             delete currentUser["password_confirmation"];
                         }
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
                         oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.change_password(user_id, currentUser)];
+                        return [4 /*yield*/, oDALC.change_password(user_id, newPassword)];
                     case 3:
                         status_6 = _a.sent();
                         return [2 /*return*/, status_6];

@@ -30,7 +30,7 @@ class DALC {
   };
 
   // #region Admin Privileges
-  create_user = async (user) => {
+  create_user = async (user, password) => {
     const LAN = _LANGUAGE.getLanguage();
     let USER;
 
@@ -41,8 +41,9 @@ class DALC {
     }
 
     try {
-      const userDoc = new UserModel(user);
-      await userDoc.save();
+      const newUser = new UserModel(user);
+      newUser.setPassword(password);
+      await newUser.save();
       return USER.SUCCESSFULL_CREATION;
     } catch (error) {
       return error.message;
@@ -158,7 +159,7 @@ class DALC {
     }
   };
 
-  change_password = async (_id, user) => {
+  change_password = async (_id, password) => {
     const LAN = _LANGUAGE.getLanguage();
     let USER;
 
@@ -169,11 +170,10 @@ class DALC {
     }
 
     try {
-      await UserModel.findByIdAndUpdate({ _id }, user, (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-      });
+      const newPassword = new UserModel();
+      newPassword.setPassword(password);
+      const { salt, hash } = newPassword;
+      await UserModel.findByIdAndUpdate({ _id }, { salt, hash });
       return USER.SUCCESSFULL_PASSWORD_CHANGE;
     } catch (error) {
       return error.message;
