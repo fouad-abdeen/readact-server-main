@@ -133,7 +133,7 @@ var BLC = /** @class */ (function () {
                         else if (user_type_id === _ID.SuperAdmin) {
                             throw new Error(USER.SA_CREATION);
                         }
-                        else if (username !== null) {
+                        else if (username) {
                             throw new Error(USER.USERNAME);
                         }
                         else if (!isStrongPassword) {
@@ -192,7 +192,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.change_user_type = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, currentUser, current_user_type, new_user_type, IDs, oDALC, status_3, error_5;
+            var LAN, USER, user, user_id, new_user_type, IDs, user_data, current_user_type, oDALC, status_3, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -205,47 +205,54 @@ var BLC = /** @class */ (function () {
                         }
                         user = req.body;
                         user_id = user.user_id;
-                        return [4 /*yield*/, UserModel.findById(user._id).exec()];
-                    case 1:
-                        currentUser = _a.sent();
-                        current_user_type = currentUser.user_type_id;
                         new_user_type = user.user_type_id;
                         IDs = Object.values(_ID);
-                        if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
-                            throw new Error(USER.USER_TYPE_CHANGE);
-                        }
-                        else if (user_id === 2 && current_user_type === _ID.Admin) {
-                            throw new Error(USER.ADMIN_TYPE_CHANGE);
-                        }
-                        else if (user_id === 2 && new_user_type === _ID.Admin) {
-                            throw new Error(USER.ADMIN_TYPE_ASSIGN);
-                        }
-                        else if (current_user_type === _ID.SuperAdmin) {
-                            throw new Error(USER.SA_TYPE_CHANGE);
-                        }
-                        else if (new_user_type === _ID.SuperAdmin) {
-                            throw new Error(USER.SA_TYPE_ASSIGN);
-                        }
-                        else if (IDs.indexOf(new_user_type) === -1) {
-                            throw new Error(USER.USER_TYPE_ID);
-                        }
-                        _a.label = 2;
+                        if (!(user_id !== _ID.SuperAdmin && user_id !== _ID.Admin)) return [3 /*break*/, 1];
+                        throw new Error(USER.USER_TYPE_CHANGE);
+                    case 1:
+                        if (!(user_id === 2 && new_user_type === _ID.Admin)) return [3 /*break*/, 2];
+                        throw new Error(USER.ADMIN_TYPE_ASSIGN);
                     case 2:
-                        _a.trys.push([2, 4, , 5]);
+                        if (!(new_user_type === _ID.SuperAdmin)) return [3 /*break*/, 3];
+                        throw new Error(USER.SA_TYPE_ASSIGN);
+                    case 3:
+                        if (!(IDs.indexOf(new_user_type) === -1)) return [3 /*break*/, 4];
+                        throw new Error(USER.USER_TYPE_ID);
+                    case 4: return [4 /*yield*/, UserModel.findById(user._id).exec()];
+                    case 5:
+                        user_data = _a.sent();
+                        if (user_data == null) {
+                            throw new Error(USER.INEXISTENT_USER);
+                        }
+                        else {
+                            current_user_type = user_data.user_type_id;
+                            if (user_id === 2 && current_user_type === _ID.Admin) {
+                                throw new Error(USER.ADMIN_TYPE_CHANGE);
+                            }
+                            else if (current_user_type === _ID.SuperAdmin) {
+                                throw new Error(USER.SA_TYPE_CHANGE);
+                            }
+                            else if (current_user_type === new_user_type) {
+                                throw new Error(USER.UNCHANGED_USER_TYPE);
+                            }
+                        }
+                        _a.label = 6;
+                    case 6:
+                        _a.trys.push([6, 8, , 9]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.change_user_type(user._id, new_user_type)];
-                    case 3:
+                    case 7:
                         status_3 = _a.sent();
                         return [2 /*return*/, status_3];
-                    case 4:
+                    case 8:
                         error_5 = _a.sent();
                         return [2 /*return*/, error_5.message];
-                    case 5: return [2 /*return*/];
+                    case 9: return [2 /*return*/];
                 }
             });
         }); };
         this.change_location = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_type_id, location_id, oDALC, status_4, error_6;
+            var LAN, USER, user, user_id, user_type_id, location_id, user_data, oDALC, status_4, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -260,30 +267,37 @@ var BLC = /** @class */ (function () {
                         user_id = user.user_id;
                         user_type_id = user.user_type_id;
                         location_id = user.location_id;
-                        if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
-                            throw new Error(USER.LOCATION_CHANGE);
-                        }
-                        else if (user_id === _ID.Admin && user_type_id === _ID.Admin) {
-                            throw new Error(USER.ADMIN_LOCATION_CHANGE);
-                        }
-                        else if (user_type_id === _ID.SuperAdmin) {
-                            throw new Error(USER.SA_LOCATION_CHANGE);
-                        }
-                        return [4 /*yield*/, UserModel.findById(user._id).exec()];
+                        if (!(user_id !== _ID.SuperAdmin && user_id !== _ID.Admin)) return [3 /*break*/, 1];
+                        throw new Error(USER.LOCATION_CHANGE);
                     case 1:
-                        _a.sent();
-                        _a.label = 2;
+                        if (!(user_id === _ID.Admin && user_type_id === _ID.Admin)) return [3 /*break*/, 2];
+                        throw new Error(USER.ADMIN_LOCATION_CHANGE);
                     case 2:
-                        _a.trys.push([2, 4, , 5]);
+                        if (!(user_type_id === _ID.SuperAdmin)) return [3 /*break*/, 3];
+                        throw new Error(USER.SA_LOCATION_CHANGE);
+                    case 3: return [4 /*yield*/, UserModel.findById(user._id).exec()];
+                    case 4:
+                        user_data = _a.sent();
+                        if (user_data == null) {
+                            throw new Error(USER.INEXISTENT_USER);
+                        }
+                        else {
+                            if (location_id === user_data.location_id.toString()) {
+                                throw new Error(USER.UNCHANGED_LOCATION);
+                            }
+                        }
+                        _a.label = 5;
+                    case 5:
+                        _a.trys.push([5, 7, , 8]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.change_location(user._id, location_id)];
-                    case 3:
+                    case 6:
                         status_4 = _a.sent();
                         return [2 /*return*/, status_4];
-                    case 4:
+                    case 7:
                         error_6 = _a.sent();
                         return [2 /*return*/, error_6.message];
-                    case 5: return [2 /*return*/];
+                    case 8: return [2 /*return*/];
                 }
             });
         }); };
@@ -328,7 +342,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.edit_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, user_id, user, isValidEmail, isValidMobileNumber, firstNameEn, firstNameAr, lastNameEn, lastNameAr, user_type_id, user_data, isVerified, oDALC, status_5, error_9;
+            var LAN, USER, currentUser, _id, username, email_address, first_name_en, first_name_ar, last_name_en, last_name_ar, full_address_en, full_address_ar, isValidEmail, isValidMobileNumber, userByUsername, userByEmail, userByID, user_type_id, oDALC, status_5, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -340,80 +354,95 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         currentUser = req.body;
-                        user_id = currentUser._id;
-                        return [4 /*yield*/, UserModel.findOne({
-                                username: currentUser.username
-                            }).exec()];
-                    case 1:
-                        user = _a.sent();
-                        isValidEmail = validator.isEmail(currentUser.email_address);
+                        _id = currentUser._id, username = currentUser.username, email_address = currentUser.email_address, first_name_en = currentUser.first_name_en, first_name_ar = currentUser.first_name_ar, last_name_en = currentUser.last_name_en, last_name_ar = currentUser.last_name_ar, full_address_en = currentUser.full_address_en, full_address_ar = currentUser.full_address_ar;
+                        isValidEmail = validator.isEmail(email_address);
                         isValidMobileNumber = validator.isMobilePhone(currentUser.mobile_number);
-                        firstNameEn = currentUser.first_name_en;
-                        firstNameAr = currentUser.first_name_ar;
-                        lastNameEn = currentUser.last_name_en;
-                        lastNameAr = currentUser.last_name_ar;
-                        user_type_id = currentUser.user_type_id;
-                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                        if (!!isValidEmail) return [3 /*break*/, 1];
+                        throw new Error(USER.EMAIL);
+                    case 1:
+                        if (!!isValidMobileNumber) return [3 /*break*/, 2];
+                        throw new Error(USER.MOBILE);
                     case 2:
-                        _a.sent();
-                        if (user !== null && user._id.toString() !== currentUser._id) {
-                            throw new Error(USER.USERNAME);
-                        }
-                        else if (!isValidEmail) {
-                            throw new Error(USER.EMAIL);
-                        }
-                        else if (!isValidMobileNumber) {
-                            throw new Error(USER.MOBILE);
-                        }
-                        else if (firstNameEn.length < 2 || firstNameAr.length < 2) {
-                            throw new Error(USER.FIRST_NAME);
-                        }
-                        else if (lastNameEn.length < 2 || lastNameAr.length < 2) {
-                            throw new Error(USER.LAST_NAME);
-                        }
-                        else if (typeof currentUser.full_address_en !== "string" ||
-                            typeof currentUser.full_address_ar !== "string") {
-                            throw new Error(USER.ADDRESS);
-                        }
-                        else if (currentUser.email_address !== currentUser.email_address_confirmation) {
-                            throw new Error(USER.EMAIL_CONFIRMATION);
+                        if (!(typeof first_name_en !== "string" ||
+                            typeof first_name_ar !== "string")) return [3 /*break*/, 3];
+                        throw new Error(USER.FIRST_NAME);
+                    case 3:
+                        if (!(typeof last_name_en !== "string" ||
+                            typeof last_name_ar !== "string")) return [3 /*break*/, 4];
+                        throw new Error(USER.LAST_NAME);
+                    case 4:
+                        if (!(first_name_en.length < 2 || first_name_ar.length < 2)) return [3 /*break*/, 5];
+                        throw new Error(USER.FIRST_NAME);
+                    case 5:
+                        if (!(last_name_en.length < 2 || last_name_ar.length < 2)) return [3 /*break*/, 6];
+                        throw new Error(USER.LAST_NAME);
+                    case 6:
+                        if (!(username.length < 4)) return [3 /*break*/, 7];
+                        throw new Error(USER.INVALID_USERNAME);
+                    case 7:
+                        if (!(typeof full_address_en !== "string" ||
+                            typeof full_address_ar !== "string")) return [3 /*break*/, 8];
+                        throw new Error(USER.ADDRESS);
+                    case 8:
+                        if (!(full_address_en.length < 20 || full_address_ar.length < 20)) return [3 /*break*/, 9];
+                        throw new Error(USER.ADDRESS_LENGTH);
+                    case 9:
+                        if (!(email_address !== currentUser.email_address_confirmation)) return [3 /*break*/, 10];
+                        throw new Error(USER.EMAIL_CONFIRMATION);
+                    case 10: return [4 /*yield*/, UserModel.findOne({
+                            username: username
+                        }).exec()];
+                    case 11:
+                        userByUsername = _a.sent();
+                        if (!(userByUsername &&
+                            userByUsername._id.toString() !== currentUser._id &&
+                            currentUser._id)) return [3 /*break*/, 12];
+                        throw new Error(USER.USERNAME);
+                    case 12: return [4 /*yield*/, UserModel.findOne({
+                            email_address: email_address
+                        }).exec()];
+                    case 13:
+                        userByEmail = _a.sent();
+                        if (!(userByEmail &&
+                            userByEmail._id.toString() !== currentUser._id &&
+                            currentUser._id)) return [3 /*break*/, 14];
+                        throw new Error(USER.EMAIL_EXISTS);
+                    case 14: return [4 /*yield*/, UserModel.findById(_id).exec()];
+                    case 15:
+                        userByID = _a.sent();
+                        user_type_id = userByID.user_type_id;
+                        if (user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin) {
+                            delete currentUser["_id"];
+                            delete currentUser["password"];
+                            delete currentUser["is_verified"];
+                            delete currentUser["is_verification_requested"];
+                            delete currentUser["email_address_confirmation"];
+                            delete currentUser["user_type_id"];
+                            delete currentUser["location_id"];
                         }
                         else {
-                            if (user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin) {
-                                delete currentUser["_id"];
-                                delete currentUser["password"];
-                                delete currentUser["email_address_confirmation"];
-                                delete currentUser["user_type_id"];
-                                delete currentUser["location_id"];
-                            }
-                            else {
-                                delete currentUser["_id"];
-                                delete currentUser["password"];
-                                delete currentUser["email_address_confirmation"];
-                                delete currentUser["user_type_id"];
-                            }
+                            delete currentUser["_id"];
+                            delete currentUser["password"];
+                            delete currentUser["is_verified"];
+                            delete currentUser["is_verification_requested"];
+                            delete currentUser["email_address_confirmation"];
+                            delete currentUser["user_type_id"];
                         }
-                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
-                    case 3:
-                        user_data = _a.sent();
-                        isVerified = user_data.is_verified;
-                        if (isVerified === false) {
-                            currentUser["is_verified"] = false;
-                            currentUser["is_verification_requested"] = false;
-                            currentUser["is_profile_completed"] = true;
-                        }
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 6, , 7]);
+                        _a.label = 16;
+                    case 16:
+                        currentUser["is_profile_completed"] = true;
+                        _a.label = 17;
+                    case 17:
+                        _a.trys.push([17, 19, , 20]);
                         oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.edit_user(user_id, currentUser)];
-                    case 5:
+                        return [4 /*yield*/, oDALC.edit_user(_id, currentUser)];
+                    case 18:
                         status_5 = _a.sent();
                         return [2 /*return*/, status_5];
-                    case 6:
+                    case 19:
                         error_9 = _a.sent();
                         return [2 /*return*/, error_9.message];
-                    case 7: return [2 /*return*/];
+                    case 20: return [2 /*return*/];
                 }
             });
         }); };
@@ -472,7 +501,7 @@ var BLC = /** @class */ (function () {
             });
         }); };
         this.request_verification_code = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, code, date, oDALC, status_7, error_11;
+            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, verificationRequest, code, date, oDALC, status_7, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -484,39 +513,47 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         user = req.body;
-                        user_id = user.user_id;
+                        user_id = user._id;
                         return [4 /*yield*/, UserModel.findById(user_id).exec()];
                     case 1:
                         user_data = _a.sent();
                         isVerified = user_data.is_verified;
                         isVerificationRequested = user_data.is_verification_requested;
                         isProfileCompleted = user_data.is_profile_completed;
-                        if (!isProfileCompleted) {
-                            throw new Error(USER.ICOMPLETE_PROFILE);
-                        }
-                        else if (isVerificationRequested && !isVerified) {
+                        if (!!isProfileCompleted) return [3 /*break*/, 2];
+                        throw new Error(USER.ICOMPLETE_PROFILE);
+                    case 2:
+                        if (!(isVerificationRequested && !isVerified)) return [3 /*break*/, 3];
+                        throw new Error(USER.REQUESTED_VERIFICATION);
+                    case 3:
+                        if (!isVerified) return [3 /*break*/, 4];
+                        throw new Error(USER.VERIFIED_ACCOUNT);
+                    case 4: return [4 /*yield*/, VerificationCodeModel.findOne({
+                            user_id: user_id
+                        }).exec()];
+                    case 5:
+                        verificationRequest = _a.sent();
+                        if (verificationRequest) {
                             throw new Error(USER.REQUESTED_VERIFICATION);
                         }
-                        else if (isVerified) {
-                            throw new Error(USER.VERIFIED_ACCOUNT);
-                        }
-                        return [4 /*yield*/, _CODE_GENERATOR(user.first_name_en, user.last_name_en)];
-                    case 2:
+                        _a.label = 6;
+                    case 6: return [4 /*yield*/, _CODE_GENERATOR(user.first_name_en, user.last_name_en)];
+                    case 7:
                         code = _a.sent();
                         date = moment();
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
+                        _a.label = 8;
+                    case 8:
+                        _a.trys.push([8, 10, , 11]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.request_verification_code(user_id, user.email_address, code, date)];
-                    case 4:
+                    case 9:
                         status_7 = _a.sent();
                         // Send verification code by email
                         return [2 /*return*/, status_7];
-                    case 5:
+                    case 10:
                         error_11 = _a.sent();
                         return [2 /*return*/, error_11.message];
-                    case 6: return [2 /*return*/];
+                    case 11: return [2 /*return*/];
                 }
             });
         }); };
@@ -539,45 +576,44 @@ var BLC = /** @class */ (function () {
                             }).exec()];
                     case 1:
                         verfication_request = _a.sent();
+                        if (!!verfication_request) return [3 /*break*/, 2];
+                        throw new Error(USER.INEXISTENT_VERIFICATION_CODE);
+                    case 2:
                         code = verfication_request.code;
                         isExpired = verfication_request.is_expired;
                         date = verfication_request.request_date;
-                        if (!(code !== user.code)) return [3 /*break*/, 2];
+                        if (!(code !== user.code)) return [3 /*break*/, 3];
                         throw new Error(USER.VERIFICATION_CODE);
-                    case 2:
-                        if (!isExpired) return [3 /*break*/, 3];
-                        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
                     case 3:
+                        if (!isExpired) return [3 /*break*/, 4];
+                        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
+                    case 4:
                         now = moment();
                         difference = now.diff(date, "hours");
-                        if (!(difference > 48)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, VerificationCodeModel.findOneAndUpdate({ code: code }, { is_expired: true }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
-                    case 4:
+                        if (!(difference > 48)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, VerificationCodeModel.findOneAndUpdate({ code: code }, { is_expired: true })];
+                    case 5:
                         _a.sent();
                         throw new Error(USER.EXPIRED_VERIFICATION_CODE);
-                    case 5: return [4 /*yield*/, UserModel.findById(user_id).exec()];
-                    case 6:
+                    case 6: return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 7:
                         user_data = _a.sent();
                         isVerified = user_data.is_verified;
                         if (isVerified) {
                             throw new Error(USER.VERIFIED_ACCOUNT);
                         }
-                        _a.label = 7;
-                    case 7:
-                        _a.trys.push([7, 9, , 10]);
+                        _a.label = 8;
+                    case 8:
+                        _a.trys.push([8, 10, , 11]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.verify_account(user_id)];
-                    case 8:
+                    case 9:
                         status_8 = _a.sent();
                         return [2 /*return*/, status_8];
-                    case 9:
+                    case 10:
                         error_12 = _a.sent();
                         return [2 /*return*/, error_12.message];
-                    case 10: return [2 /*return*/];
+                    case 11: return [2 /*return*/];
                 }
             });
         }); };

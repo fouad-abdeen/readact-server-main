@@ -158,11 +158,7 @@ var DALC = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { user_type_id: user_type_id }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { user_type_id: user_type_id })];
                     case 3:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE];
@@ -192,11 +188,7 @@ var DALC = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { location_id: location_id }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { location_id: location_id })];
                     case 3:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE];
@@ -242,10 +234,6 @@ var DALC = /** @class */ (function () {
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, user, {
                                 "new": true
-                            }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
                             })];
                     case 2:
                         _a.sent();
@@ -286,7 +274,7 @@ var DALC = /** @class */ (function () {
                 }
             });
         }); };
-        this.request_verification_code = function (_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
+        this.request_verification_code = function (user_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
             var LAN, USER, VerficationCodeDoc, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -302,7 +290,7 @@ var DALC = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 4, , 5]);
                         VerficationCodeDoc = new VerificationCodeModel({
-                            _id: _id,
+                            user_id: user_id,
                             email_address: email_address,
                             code: code,
                             request_date: request_date,
@@ -311,11 +299,7 @@ var DALC = /** @class */ (function () {
                         return [4 /*yield*/, VerficationCodeDoc.save()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { is_verification_requested: true }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: user_id }, { is_verification_requested: true })];
                     case 3:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST];
@@ -341,11 +325,7 @@ var DALC = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { is_verified: true }, function (err) {
-                                if (err) {
-                                    throw new Error(err);
-                                }
-                            })];
+                        return [4 /*yield*/, UserModel.findByIdAndUpdate({ _id: _id }, { is_verified: true })];
                     case 2:
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_ACCOUNT_VERIFICATION];

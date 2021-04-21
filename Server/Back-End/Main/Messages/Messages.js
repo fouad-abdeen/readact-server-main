@@ -3,20 +3,26 @@
 const MESSAGES = {
   EN: {
     USER: {
-      USERNAME: "Username exists!",
+      USERNAME: "Username exists! Please choose another one.",
+      INVALID_USERNAME: "The username must consist of at least 4 characters!",
       PASSWORD: "Weak Password!",
       FIRST_NAME: "Invalid First Name!",
       LAST_NAME: "Invalid Last Name!",
       EMAIL: "Invalid Email Address!",
       MOBILE: "Invalid Mobile Number!",
-      ADDRESS: "Invalid Address!",
+      ADDRESS: "Invalid Home Address!",
+      ADDRESS_LENGTH:
+        "The home address must consist of at least 20 characters!",
       EMAIL_CONFIRMATION: "Please confirm your email!",
+      EMAIL_EXISTS: "Email exists! Please choose another one.",
       ICOMPLETE_PROFILE: "Your profile is incomplete!",
       REQUESTED_VERIFICATION:
         "You've requested the account verification code before now! Please check your email inbox.",
       VERIFIED_ACCOUNT: "Your account is already verified!",
-      VERIFICATION_CODE: "Invalid Verification Code!",
+      VERIFICATION_CODE: "Provided account verification code is incorrect!",
       EXPIRED_VERIFICATION_CODE: "Your account verification code is expired!",
+      INEXISTENT_VERIFICATION_CODE:
+        "You didn't request a verification code before!",
       USER_TYPE_ID: "Invalid User Account's Type!",
       USERS_LIST: "You have no privilege to retrieve users list!",
       USER_CREATION: "You have no privilege to create a user account!",
@@ -31,10 +37,13 @@ const MESSAGES = {
         "You have no privilege to change an admin's account type!",
       ADMIN_TYPE_ASSIGN:
         "You have no privilege to assign admin roles (account's types)!",
+      UNCHANGED_USER_TYPE: "Please choose a new user account type!",
+      UNCHANGED_LOCATION: "Please choose a new location!",
       LOCATION_CHANGE: "You have no privilege to change a user's location!",
       ADMIN_LOCATION_CHANGE:
         "You have no privilege to change location of admins!",
       SA_LOCATION_CHANGE: "You can't change location of super admins!",
+      INEXISTENT_USER: "The user account is not existing!",
       PASSWORD_CHECK: "Incorrect Password!",
       PASSWORD_CONFIRMATION: "Please confirm your new password!",
       PASSWORD_UNCHANGED: "Please enter a new password!",
@@ -53,20 +62,26 @@ const MESSAGES = {
   },
   AR: {
     USER: {
-      USERNAME: "اسم المستخدم موجود مسبقًا",
+      USERNAME: "اسم المستخدم موجود مسبقًا، رجاءً اختر واحد آخر",
+      INVALID_USERNAME: "يجب أن يتكوّن اسم المستخدم من 4 أحرف على الأقل",
       PASSWORD: "كلمة السر ضعيفة",
       FIRST_NAME: "الاسم الأول غير صالح",
       LAST_NAME: "الاسم الأخير غير صالح",
       EMAIL: "البريد الإلكتروني غير صالح",
       MOBILE: "رقم الخلوي غير صالح",
       ADDRESS: "عنوان المنزل غير صالح",
+      ADDRESS_LENGTH: "يجب أن يتكوّن عنوان المنزل من 20 حرف على الأقل",
       EMAIL_CONFIRMATION: "رجاءً قم(ي) بتأكيد بريدك( ِ)الإلكتروني",
+      EMAIL_EXISTS: "البريد الإلكتروني موجود مسبقًا، رجاءً اختر واحد آخر",
       ICOMPLETE_PROFILE: "ملف حسابك غير مكتمل",
       REQUESTED_VERIFICATION:
-        "لقد طالبت( ِ) برمز تغعيل حسابك( ِ) من قبل، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
-      VERIFIED_ACCOUNT: "حسابك مفعل من قبل",
-      VERIFICATION_CODE: "رمز تفعيل الحساب غير صالح",
-      EXPIRED_VERIFICATION_CODE: "إن رمز تفعيل حسابك( ِ) منتهي الصلاحية",
+        "لقد طالبت( ِ) برمز التحقق من حسابك( ِ) قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
+      VERIFIED_ACCOUNT: "تم التحقق من حسابك( ِ) قبل الآن",
+      VERIFICATION_CODE: "إن رمز التحقق من الحساب الذي تم إدخاله غير صحيح",
+      EXPIRED_VERIFICATION_CODE:
+        "إن رمز رمز التحقق من حسابك( ِ) منتهي الصلاحية",
+      INEXISTENT_VERIFICATION_CODE:
+        "أنت( ِ) لم تقم(ي) بطلب رمز التحقق من الحساب قبل الآن",
       USER_TYPE_ID: "نوع حساب المستخدم غير صالح",
       USERS_LIST: "ليست لديك( ِ) الصلاحية للحصول على اللائحة بالمستخدمين",
       USER_CREATION: "ليست لديك( ِ) الصلاحية لإضافة حساب المستخدم",
@@ -78,9 +93,12 @@ const MESSAGES = {
       SA_TYPE_ASSIGN: "لا يمكنك( ِ) إضافة دور (نوع حساب) مسؤول أعلى",
       ADMIN_TYPE_CHANGE: "ليست لديك( ِ) الصلاحية لتغيير نوع حساب مسؤول",
       ADMIN_TYPE_ASSIGN: "ليست لديك( ِ) الصلاحية لإضافة دور (نوع حساب) مسؤول",
+      UNCHANGED_USER_TYPE: "رجاءً اختر(ي) نوع جديد لحساب المستخدم",
+      UNCHANGED_LOCATION: "رجاءً اختر(ي) موقع جديد للمستخدم",
       LOCATION_CHANGE: "ليست لديك( ِ) الصلاحية لتغيير موقع المستخدم",
       ADMIN_LOCATION_CHANGE: "ليست لديك( ِ) الصلاحية لتغيير موقع إحد المسؤولين",
       SA_LOCATION_CHANGE: "لا يمكنك( ِ) تغيير موقع مسؤول أعلى",
+      INEXISTENT_USER: "حساب المستخدم غير موجود",
       PASSWORD_CHECK: "كلمة المرور غير صحيحة",
       PASSWORD_CONFIRMATION: "رجاءً قم(ي) بتأكيد كلمة المرور الجديدة",
       PASSWORD_UNCHANGED: "رجاءً قم(ي) بإدخال كلمة مرور جديدة",
@@ -90,9 +108,9 @@ const MESSAGES = {
       SUCCESSFULL_DELETETION: " تمت بنجاح عملبة حذف حساب",
       SUCCESSFULL_USER_TYPE_CHANGE: "تم تعديل نوع حساب المستخدم بنجاح إلى ",
       SUCCESSFULL_LOCATION_CHANGE: "تم تعديل موقع المستخدم إلى ",
-      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `تم طلب رمز تفعيل حسابك( ِ) بنجاح
+      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `تم طلب رمز التحقق من حسابك( ِ) بنجاح
       رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
-      SUCCESSFULL_ACCOUNT_VERIFICATION: "تم تفعيل حسابك( ِ) بنجاح",
+      SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
     },
   },
 };

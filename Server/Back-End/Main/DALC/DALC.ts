@@ -84,11 +84,7 @@ class DALC {
     }
 
     try {
-      await UserModel.findByIdAndUpdate({ _id }, { user_type_id }, (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-      });
+      await UserModel.findByIdAndUpdate({ _id }, { user_type_id });
       return USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE;
     } catch (error) {
       return error.message;
@@ -109,11 +105,7 @@ class DALC {
     }
 
     try {
-      await UserModel.findByIdAndUpdate({ _id }, { location_id }, (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-      });
+      await UserModel.findByIdAndUpdate({ _id }, { location_id });
       return USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE;
     } catch (error) {
       return error.message;
@@ -141,18 +133,9 @@ class DALC {
     }
 
     try {
-      await UserModel.findByIdAndUpdate(
-        { _id },
-        user,
-        {
-          new: true,
-        },
-        (err) => {
-          if (err) {
-            throw new Error(err);
-          }
-        }
-      );
+      await UserModel.findByIdAndUpdate({ _id }, user, {
+        new: true,
+      });
       return USER.SUCCESSFULL_UPDATE;
     } catch (error) {
       return error.message;
@@ -181,7 +164,7 @@ class DALC {
   };
 
   request_verification_code = async (
-    _id,
+    user_id,
     email_address,
     code,
     request_date
@@ -197,7 +180,7 @@ class DALC {
 
     try {
       const VerficationCodeDoc = new VerificationCodeModel({
-        _id,
+        user_id,
         email_address,
         code,
         request_date,
@@ -206,13 +189,8 @@ class DALC {
       await VerficationCodeDoc.save();
 
       await UserModel.findByIdAndUpdate(
-        { _id },
-        { is_verification_requested: true },
-        (err) => {
-          if (err) {
-            throw new Error(err);
-          }
-        }
+        { _id: user_id },
+        { is_verification_requested: true }
       );
 
       return USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST;
@@ -232,15 +210,7 @@ class DALC {
     }
 
     try {
-      await UserModel.findByIdAndUpdate(
-        { _id },
-        { is_verified: true },
-        (err) => {
-          if (err) {
-            throw new Error(err);
-          }
-        }
-      );
+      await UserModel.findByIdAndUpdate({ _id }, { is_verified: true });
 
       return USER.SUCCESSFULL_ACCOUNT_VERIFICATION;
     } catch (error) {
