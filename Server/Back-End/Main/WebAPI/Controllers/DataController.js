@@ -40,10 +40,14 @@ var router = express.Router();
 // Names of Routes
 var routes = require("../Names.Routes");
 var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser, changePassword = _a.changePassword, getUserTypes = _a.getUserTypes, changeUserType = _a.changeUserType, changeLocation = _a.changeLocation, requestVerificationCode = _a.requestVerificationCode, verifyAccount = _a.verifyAccount, authenticate = _a.authenticate;
+// JWT Authorization Middleware
+var jwtAuth = require("../Middlewares/auth");
 // Business Logic Component
 var _BLC = require("../../BLC/BLC");
 // Language for Messages
 var _LANGUAGE = require("../../Messages/Language");
+// Custom Code Generator
+var _GENERATE_CODE = require("../../customCodeGenerator");
 // #region Controllers
 // #region User
 var get_all_user_types = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
@@ -341,21 +345,21 @@ var verify_account = function (req, res) { return __awaiter(_this, void 0, void 
 // #endregion
 // #region Routes
 // #region User
-router.get("/" + getAllUsers, get_all_users);
-router.get("/" + getSomeUsers, get_some_users);
-router.get("/" + getUser, get_user);
-router.post("/" + createUser, create_user);
-router.put("/" + editUser, edit_user);
-router["delete"]("/" + deleteUser, delete_user);
-router.put("/" + changePassword, change_password);
-router.post("/" + requestVerificationCode, request_verification_code);
-router.put("/" + verifyAccount, verify_account);
-router.get("/" + getUserTypes, get_all_user_types);
-router.put("/" + changeUserType, change_user_type);
-router.put("/" + changeLocation, change_location);
 router.get("/" + authenticate, authenticate_user);
+router.get("/" + getAllUsers, jwtAuth, get_all_users);
+router.get("/" + getSomeUsers, jwtAuth, get_some_users);
+router.get("/" + getUser, jwtAuth, get_user);
+router.post("/" + createUser, jwtAuth, create_user);
+router.put("/" + editUser, jwtAuth, edit_user);
+router["delete"]("/" + deleteUser, jwtAuth, delete_user);
+router.put("/" + changePassword, jwtAuth, change_password);
+router.post("/" + requestVerificationCode, jwtAuth, request_verification_code);
+router.put("/" + verifyAccount, jwtAuth, verify_account);
+router.get("/" + getUserTypes, jwtAuth, get_all_user_types);
+router.put("/" + changeUserType, jwtAuth, change_user_type);
+router.put("/" + changeLocation, jwtAuth, change_location);
 // #endregion
-// #region Language
+// #region Change Language
 router.post("/" + routes.changeLanguage, function (req, res) {
     var language = req.body.language;
     if (language !== "EN" && language !== "AR") {
@@ -372,5 +376,19 @@ router.post("/" + routes.changeLanguage, function (req, res) {
     }
 });
 // #endregion
+// #region Generate Custom Code
+router.get("/" + routes.generateCode, function (req, res) {
+    var _a = req.body, first_name = _a.first_name, last_name = _a.last_name;
+    var code = _GENERATE_CODE(first_name, last_name);
+    try {
+        res.send(code);
+    }
+    catch (error) {
+        res.status(500).send({
+            message: error.message || "Some error occured while generating the code"
+        });
+    }
+});
+//#endregion
 // #endregion
 module.exports = router;

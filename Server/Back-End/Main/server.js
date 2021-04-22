@@ -9,11 +9,11 @@ const routes = require("./WebAPI/Controllers/DataController");
 
 const app = express();
 
+// CORS Middleware
 app.use(cors());
 
+// JSON Parsing Middleware
 app.use(express.json());
-
-app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/data", routes);
 

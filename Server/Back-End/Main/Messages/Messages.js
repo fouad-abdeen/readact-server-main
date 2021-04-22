@@ -3,6 +3,7 @@
 const MESSAGES = {
   EN: {
     USER: {
+      UNAUTHORIZED: "You're not an authorized user!",
       USERNAME: "Username exists! Please choose another one.",
       INVALID_USERNAME: "The username must consist of at least 4 characters!",
       PASSWORD: "Weak Password!",
@@ -63,6 +64,7 @@ const MESSAGES = {
   },
   AR: {
     USER: {
+      UNAUTHORIZED: "أنت لست مستخدم مصرَّح به",
       USERNAME: "اسم المستخدم موجود مسبقًا، رجاءً اختر واحد آخر",
       INVALID_USERNAME: "يجب أن يتكوّن اسم المستخدم من 4 أحرف على الأقل",
       PASSWORD: "كلمة السر ضعيفة",

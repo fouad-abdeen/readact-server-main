@@ -15,6 +15,7 @@ const routes = {
     changeLocation: "changeLocation",
   },
   changeLanguage: "changeLanguage",
+  generateCode: "generateCode",
 };
 
 module.exports = routes;

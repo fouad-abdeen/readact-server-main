@@ -9,15 +9,18 @@ const _DALC = require("../DALC/DALC");
 const _MESSAGES = require("../Messages/Messages");
 const _LANGUAGE = require("../Messages/Language");
 
-// Code Generator for Account Verification & Password Reset
-const _CODE_GENERATOR = require("./CodeGenerator");
+// Custom Code Generator for Account Verification & Password Reset
+const _CODE_GENERATOR = require("../customCodeGenerator");
 
-// User Types Ids
-const _ID = require("./UserTypes");
+// JWT Token Generator for Authorization
+const _TOKEN_GENERATOR = require("../jwtTokenGenerator");
 
 // Mongoose Models
 const UserModel = require("../Models/User");
 const VerificationCodeModel = require("../Models/AccountVerificationCode");
+
+// User Types Ids
+const _ID = require("./UserTypes");
 
 class BLC {
   //  #region User
@@ -253,10 +256,11 @@ class BLC {
       if (!isValidPassword) throw new Error(USER.PASSWORD_CHECK);
     }
 
+    const { _id, username } = user_data;
+    const token = await _TOKEN_GENERATOR({ _id, username });
+
     try {
-      const oDALC = new _DALC();
-      const user = await oDALC.authenticate_user(user_data);
-      return user;
+      return { token, _id, username };
     } catch (error) {
       return error.message;
     }

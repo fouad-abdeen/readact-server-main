@@ -48,43 +48,25 @@ var DALC = /** @class */ (function () {
     function DALC() {
         var _this = this;
         // #region User
-        this.get_users = function () { return __awaiter(_this, void 0, void 0, function () {
-            var users, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserModel.find({})];
-                    case 1:
-                        users = _a.sent();
-                        return [2 /*return*/, users];
-                    case 2:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, error_1.message];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        }); };
-        this.get_all_user_types = function () { return __awaiter(_this, void 0, void 0, function () {
-            var user_types, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserTypeModel.find({})];
-                    case 1:
-                        user_types = _a.sent();
-                        return [2 /*return*/, user_types];
-                    case 2:
-                        error_2 = _a.sent();
-                        return [2 /*return*/, error_2.message];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        }); };
+        this.get_users = function () {
+            try {
+                return UserModel.find({});
+            }
+            catch (error) {
+                return error.message;
+            }
+        };
+        this.get_all_user_types = function () {
+            try {
+                return UserTypeModel.find({});
+            }
+            catch (error) {
+                return error.message;
+            }
+        };
         // #region Admin Privileges
         this.create_user = function (user, password) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, newUser, error_3;
+            var LAN, USER, newUser, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -105,14 +87,14 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_CREATION];
                     case 3:
-                        error_3 = _a.sent();
-                        return [2 /*return*/, error_3.message];
+                        error_1 = _a.sent();
+                        return [2 /*return*/, error_1.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.delete_user = function (_id) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, error_4;
+            var LAN, USER, user, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -131,14 +113,14 @@ var DALC = /** @class */ (function () {
                         user = _a.sent();
                         return [2 /*return*/, user.username + USER.SUCCESSFULL_DELETETION];
                     case 3:
-                        error_4 = _a.sent();
-                        return [2 /*return*/, error_4.message];
+                        error_2 = _a.sent();
+                        return [2 /*return*/, error_2.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.change_user_type = function (_id, user_type_id) { return __awaiter(_this, void 0, void 0, function () {
-            var UserType, LAN, USER, USER_TYPE_TITLE, error_5;
+            var UserType, LAN, USER, USER_TYPE_TITLE, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, UserTypeModel.findOne({
@@ -163,14 +145,14 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_USER_TYPE_CHANGE + USER_TYPE_TITLE];
                     case 4:
-                        error_5 = _a.sent();
-                        return [2 /*return*/, error_5.message];
+                        error_3 = _a.sent();
+                        return [2 /*return*/, error_3.message];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         this.change_location = function (_id, location_id) { return __awaiter(_this, void 0, void 0, function () {
-            var Location, LAN, USER, LOCATION_TITLE, error_6;
+            var Location, LAN, USER, LOCATION_TITLE, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, LocationModel.findById({ _id: location_id }).exec()];
@@ -193,33 +175,23 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_LOCATION_CHANGE + LOCATION_TITLE];
                     case 4:
-                        error_6 = _a.sent();
-                        return [2 /*return*/, error_6.message];
+                        error_4 = _a.sent();
+                        return [2 /*return*/, error_4.message];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         // #endregion
-        this.authenticate_user = function (user) { return user; };
-        this.get_user = function (_id) { return __awaiter(_this, void 0, void 0, function () {
-            var user, error_7;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserModel.findById(_id)];
-                    case 1:
-                        user = _a.sent();
-                        return [2 /*return*/, user];
-                    case 2:
-                        error_7 = _a.sent();
-                        return [2 /*return*/, error_7.message];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        }); };
+        this.get_user = function (_id) {
+            try {
+                return UserModel.findById(_id);
+            }
+            catch (error) {
+                return error.message;
+            }
+        };
         this.edit_user = function (_id, user) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, error_8;
+            var LAN, USER, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -240,14 +212,14 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_UPDATE];
                     case 3:
-                        error_8 = _a.sent();
-                        return [2 /*return*/, error_8.message];
+                        error_5 = _a.sent();
+                        return [2 /*return*/, error_5.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.change_password = function (_id, password) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, newPassword, salt, hash, error_9;
+            var LAN, USER, newPassword, salt, hash, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -269,14 +241,14 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_PASSWORD_CHANGE];
                     case 3:
-                        error_9 = _a.sent();
-                        return [2 /*return*/, error_9.message];
+                        error_6 = _a.sent();
+                        return [2 /*return*/, error_6.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.request_verification_code = function (user_id, email_address, code, request_date) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, VerficationCodeDoc, error_10;
+            var LAN, USER, VerficationCodeDoc, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -305,14 +277,14 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST];
                     case 4:
-                        error_10 = _a.sent();
-                        return [2 /*return*/, error_10.message];
+                        error_7 = _a.sent();
+                        return [2 /*return*/, error_7.message];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         this.verify_account = function (_id) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, error_11;
+            var LAN, USER, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -331,8 +303,8 @@ var DALC = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, USER.SUCCESSFULL_ACCOUNT_VERIFICATION];
                     case 3:
-                        error_11 = _a.sent();
-                        return [2 /*return*/, error_11.message];
+                        error_8 = _a.sent();
+                        return [2 /*return*/, error_8.message];
                     case 4: return [2 /*return*/];
                 }
             });

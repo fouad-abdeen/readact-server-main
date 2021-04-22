@@ -11,19 +11,17 @@ const _LANGUAGE = require("../Messages/Language");
 
 class DALC {
   // #region User
-  get_users = async () => {
+  get_users = () => {
     try {
-      const users = await UserModel.find({});
-      return users;
+      return UserModel.find({});
     } catch (error) {
       return error.message;
     }
   };
 
-  get_all_user_types = async () => {
+  get_all_user_types = () => {
     try {
-      const user_types = await UserTypeModel.find({});
-      return user_types;
+      return UserTypeModel.find({});
     } catch (error) {
       return error.message;
     }
@@ -113,12 +111,9 @@ class DALC {
   };
   // #endregion
 
-  authenticate_user = (user) => user;
-
-  get_user = async (_id) => {
+  get_user = (_id) => {
     try {
-      const user = await UserModel.findById(_id);
-      return user;
+      return UserModel.findById(_id);
     } catch (error) {
       return error.message;
     }

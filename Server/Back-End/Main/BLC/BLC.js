@@ -43,13 +43,15 @@ var _DALC = require("../DALC/DALC");
 // Business Rules' Messages
 var _MESSAGES = require("../Messages/Messages");
 var _LANGUAGE = require("../Messages/Language");
-// Code Generator for Account Verification & Password Reset
-var _CODE_GENERATOR = require("./CodeGenerator");
-// User Types Ids
-var _ID = require("./UserTypes");
+// Custom Code Generator for Account Verification & Password Reset
+var _CODE_GENERATOR = require("../customCodeGenerator");
+// JWT Token Generator for Authorization
+var _TOKEN_GENERATOR = require("../jwtTokenGenerator");
 // Mongoose Models
 var UserModel = require("../Models/User");
 var VerificationCodeModel = require("../Models/AccountVerificationCode");
+// User Types Ids
+var _ID = require("./UserTypes");
 var BLC = /** @class */ (function () {
     function BLC() {
         var _this = this;
@@ -323,7 +325,7 @@ var BLC = /** @class */ (function () {
         }); };
         // #endregion
         this.authenticate_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, provided_data, credential, password, user_data, isValidPassword, oDALC, user, error_7;
+            var LAN, USER, provided_data, credential, password, user_data, isValidPassword, _id, username, token;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -349,23 +351,22 @@ var BLC = /** @class */ (function () {
                             if (!isValidPassword)
                                 throw new Error(USER.PASSWORD_CHECK);
                         }
-                        _a.label = 2;
+                        _id = user_data._id, username = user_data.username;
+                        return [4 /*yield*/, _TOKEN_GENERATOR({ _id: _id, username: username })];
                     case 2:
-                        _a.trys.push([2, 4, , 5]);
-                        oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.authenticate_user(user_data)];
-                    case 3:
-                        user = _a.sent();
-                        return [2 /*return*/, user];
-                    case 4:
-                        error_7 = _a.sent();
-                        return [2 /*return*/, error_7.message];
-                    case 5: return [2 /*return*/];
+                        token = _a.sent();
+                        try {
+                            return [2 /*return*/, { token: token, _id: _id, username: username }];
+                        }
+                        catch (error) {
+                            return [2 /*return*/, error.message];
+                        }
+                        return [2 /*return*/];
                 }
             });
         }); };
         this.get_all_users = function () { return __awaiter(_this, void 0, void 0, function () {
-            var oDALC, users, error_8;
+            var oDALC, users, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -376,14 +377,14 @@ var BLC = /** @class */ (function () {
                         users = _a.sent();
                         return [2 /*return*/, users];
                     case 2:
-                        error_8 = _a.sent();
-                        return [2 /*return*/, error_8.message];
+                        error_7 = _a.sent();
+                        return [2 /*return*/, error_7.message];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.get_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var user_id, oDALC, user, error_9;
+            var user_id, oDALC, user, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -397,14 +398,14 @@ var BLC = /** @class */ (function () {
                         user = _a.sent();
                         return [2 /*return*/, user];
                     case 3:
-                        error_9 = _a.sent();
-                        return [2 /*return*/, error_9.message];
+                        error_8 = _a.sent();
+                        return [2 /*return*/, error_8.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.edit_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, _id, username, email_address, first_name_en, first_name_ar, last_name_en, last_name_ar, full_address_en, full_address_ar, isValidEmail, isValidMobileNumber, userByUsername, userByEmail, userByID, user_type_id, oDALC, status_5, error_10;
+            var LAN, USER, currentUser, _id, username, email_address, first_name_en, first_name_ar, last_name_en, last_name_ar, full_address_en, full_address_ar, isValidEmail, isValidMobileNumber, userByUsername, userByEmail, userByID, user_type_id, oDALC, status_5, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -502,14 +503,14 @@ var BLC = /** @class */ (function () {
                         status_5 = _a.sent();
                         return [2 /*return*/, status_5];
                     case 19:
-                        error_10 = _a.sent();
-                        return [2 /*return*/, error_10.message];
+                        error_9 = _a.sent();
+                        return [2 /*return*/, error_9.message];
                     case 20: return [2 /*return*/];
                 }
             });
         }); };
         this.change_password = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, user_id, oldPassword, newPassword, user, isValidPassword, isStrongPassword, oDALC, status_6, error_11;
+            var LAN, USER, currentUser, user_id, oldPassword, newPassword, user, isValidPassword, isStrongPassword, oDALC, status_6, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -556,14 +557,14 @@ var BLC = /** @class */ (function () {
                         status_6 = _a.sent();
                         return [2 /*return*/, status_6];
                     case 4:
-                        error_11 = _a.sent();
-                        return [2 /*return*/, error_11.message];
+                        error_10 = _a.sent();
+                        return [2 /*return*/, error_10.message];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         this.request_verification_code = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, verificationRequest, code, date, oDALC, status_7, error_12;
+            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, verificationRequest, code, date, oDALC, status_7, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -613,14 +614,14 @@ var BLC = /** @class */ (function () {
                         // Send verification code by email
                         return [2 /*return*/, status_7];
                     case 10:
-                        error_12 = _a.sent();
-                        return [2 /*return*/, error_12.message];
+                        error_11 = _a.sent();
+                        return [2 /*return*/, error_11.message];
                     case 11: return [2 /*return*/];
                 }
             });
         }); };
         this.verify_account = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, verfication_request, code, isExpired, date, now, difference, user_data, isVerified, oDALC, status_8, error_13;
+            var LAN, USER, user, user_id, verfication_request, code, isExpired, date, now, difference, user_data, isVerified, oDALC, status_8, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -673,8 +674,8 @@ var BLC = /** @class */ (function () {
                         status_8 = _a.sent();
                         return [2 /*return*/, status_8];
                     case 10:
-                        error_13 = _a.sent();
-                        return [2 /*return*/, error_13.message];
+                        error_12 = _a.sent();
+                        return [2 /*return*/, error_12.message];
                     case 11: return [2 /*return*/];
                 }
             });
