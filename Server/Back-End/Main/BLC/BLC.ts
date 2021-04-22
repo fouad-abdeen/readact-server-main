@@ -42,9 +42,13 @@ class BLC {
       USER = _MESSAGES.EN.USER;
     }
 
-    const user_id = req.body.user_id;
+    const { user_id } = req.body;
+    const admin = await UserModel.findById(user_id).exec();
 
-    if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+    if (
+      admin.user_type_id !== _ID.SuperAdmin &&
+      admin.user_type_id !== _ID.Admin
+    ) {
       throw new Error(USER.USERS_LIST);
     }
 
@@ -68,26 +72,30 @@ class BLC {
     }
 
     const user = req.body;
-    const password = user.password;
-    const user_id = req.body.user_id;
-    const user_type_id = req.body.user_type_id;
-    const username = await UserModel.findOne({
-      username: user.username,
+    const { user_id, username, password, user_type_id } = user;
+    const admin = await UserModel.findById(user_id).exec();
+    const userByUsername = await UserModel.findOne({
+      username,
     }).exec();
     const isStrongPassword = validator.isStrongPassword(password);
     const IDs = Object.values(_ID);
 
-    if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+    if (
+      admin.user_type_id !== _ID.SuperAdmin &&
+      admin.user_type_id !== _ID.Admin
+    ) {
       throw new Error(USER.USER_CREATION);
     } else if (user_type_id === _ID.SuperAdmin) {
       throw new Error(USER.SA_CREATION);
-    } else if (username) {
+    } else if (userByUsername) {
       throw new Error(USER.USERNAME);
     } else if (!isStrongPassword) {
       throw new Error(USER.PASSWORD);
     } else if (IDs.indexOf(user_type_id) === -1) {
       throw new Error(USER.USER_TYPE_ID);
     }
+
+    delete user["user_id"];
 
     try {
       const oDALC = new _DALC();
@@ -108,9 +116,13 @@ class BLC {
       USER = _MESSAGES.EN.USER;
     }
 
-    const user = req.body;
+    const { user_id, _id } = req.body;
+    const admin = await UserModel.findById(user_id).exec();
+    const user = await UserModel.findById(_id).exec();
 
-    if (user.user_id !== _ID.SuperAdmin) {
+    if (!user) {
+      throw new Error(USER.INEXISTENT_USER);
+    } else if (admin.user_type_id !== _ID.SuperAdmin) {
       throw new Error(USER.USER_DELETION);
     } else if (user.user_type_id === _ID.SuperAdmin) {
       throw new Error(USER.SA_DELETION);
@@ -118,7 +130,7 @@ class BLC {
 
     try {
       const oDALC = new _DALC();
-      const status = await oDALC.delete_user(user._id);
+      const status = await oDALC.delete_user(_id);
       return status;
     } catch (error) {
       return error.message;
@@ -136,13 +148,14 @@ class BLC {
     }
 
     const user = req.body;
-    const user_id = user.user_id;
     const new_user_type = user.user_type_id;
+    const admin = await UserModel.findById(user.user_id).exec();
+    const { user_type_id } = admin;
     const IDs = Object.values(_ID);
 
-    if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+    if (user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin) {
       throw new Error(USER.USER_TYPE_CHANGE);
-    } else if (user_id === 2 && new_user_type === _ID.Admin) {
+    } else if (user_type_id === _ID.Admin && new_user_type === _ID.Admin) {
       throw new Error(USER.ADMIN_TYPE_ASSIGN);
     } else if (new_user_type === _ID.SuperAdmin) {
       throw new Error(USER.SA_TYPE_ASSIGN);
@@ -151,12 +164,12 @@ class BLC {
     } else {
       const user_data = await UserModel.findById(user._id).exec();
 
-      if (user_data == null) {
+      if (!user_data) {
         throw new Error(USER.INEXISTENT_USER);
       } else {
         const current_user_type = user_data.user_type_id;
 
-        if (user_id === 2 && current_user_type === _ID.Admin) {
+        if (user_type_id === _ID.Admin && current_user_type === _ID.Admin) {
           throw new Error(USER.ADMIN_TYPE_CHANGE);
         } else if (current_user_type === _ID.SuperAdmin) {
           throw new Error(USER.SA_TYPE_CHANGE);
@@ -185,27 +198,26 @@ class BLC {
       USER = _MESSAGES.EN.USER;
     }
 
-    const user = req.body;
-    const user_id = user.user_id;
-    const user_type_id = user.user_type_id;
-    const location_id = user.location_id;
+    const { user_id, _id, location_id } = req.body;
+    const admin = await UserModel.findById(user_id).exec();
+    const user = await UserModel.findById(_id).exec();
 
-    if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+    if (!user) {
+      throw new Error(USER.INEXISTENT_USER);
+    } else if (
+      admin.user_type_id !== _ID.SuperAdmin &&
+      admin.user_type_id !== _ID.Admin
+    ) {
       throw new Error(USER.LOCATION_CHANGE);
-    } else if (user_id === _ID.Admin && user_type_id === _ID.Admin) {
+    } else if (
+      admin.user_type_id === _ID.Admin &&
+      user.user_type_id === _ID.Admin
+    ) {
       throw new Error(USER.ADMIN_LOCATION_CHANGE);
-    } else if (user_type_id === _ID.SuperAdmin) {
+    } else if (user.user_type_id === _ID.SuperAdmin) {
       throw new Error(USER.SA_LOCATION_CHANGE);
-    } else {
-      const user_data = await UserModel.findById(user._id).exec();
-
-      if (user_data == null) {
-        throw new Error(USER.INEXISTENT_USER);
-      } else {
-        if (location_id === user_data.location_id.toString()) {
-          throw new Error(USER.UNCHANGED_LOCATION);
-        }
-      }
+    } else if (location_id === user.location_id.toString()) {
+      throw new Error(USER.UNCHANGED_LOCATION);
     }
 
     try {
@@ -217,6 +229,38 @@ class BLC {
     }
   };
   // #endregion
+
+  authenticate_user = async (req) => {
+    const LAN = _LANGUAGE.getLanguage();
+    let USER;
+
+    if (LAN === "AR") {
+      USER = _MESSAGES.AR.USER;
+    } else {
+      USER = _MESSAGES.EN.USER;
+    }
+
+    const provided_data = req.body;
+    const { credential, password } = provided_data;
+    const user_data = await UserModel.findOne({
+      $or: [{ username: credential }, { email_address: credential }],
+    }).exec();
+
+    if (!user_data) {
+      throw new Error(USER.CREDENTIAL_CHECK);
+    } else {
+      const isValidPassword = user_data.validPassword(password);
+      if (!isValidPassword) throw new Error(USER.PASSWORD_CHECK);
+    }
+
+    try {
+      const oDALC = new _DALC();
+      const user = await oDALC.authenticate_user(user_data);
+      return user;
+    } catch (error) {
+      return error.message;
+    }
+  };
 
   get_all_users = async () => {
     try {

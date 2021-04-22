@@ -62,7 +62,7 @@ class DALC {
 
     try {
       const user = await UserModel.findOneAndRemove({ _id });
-      return `${user.username}${USER.SUCCESSFULL_DELETETION}`;
+      return user.username + USER.SUCCESSFULL_DELETETION;
     } catch (error) {
       return error.message;
     }
@@ -113,9 +113,11 @@ class DALC {
   };
   // #endregion
 
+  authenticate_user = (user) => user;
+
   get_user = async (_id) => {
     try {
-      const user = await UserModel.findOne({ _id });
+      const user = await UserModel.findById(_id);
       return user;
     } catch (error) {
       return error.message;

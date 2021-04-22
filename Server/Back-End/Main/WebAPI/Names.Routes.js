@@ -1,5 +1,6 @@
 const routes = {
   user: {
+    authenticate: "authenticate",
     createUser: "createUser",
     getAllUsers: "getAllUsers",
     getSomeUsers: "getSomeUsers",

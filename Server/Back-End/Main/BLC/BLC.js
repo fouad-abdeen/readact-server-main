@@ -74,7 +74,7 @@ var BLC = /** @class */ (function () {
         }); };
         // #region Admin Privileges
         this.get_some_users = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user_id, oDALC, users, error_2;
+            var LAN, USER, user_id, admin, oDALC, users, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -86,26 +86,30 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         user_id = req.body.user_id;
-                        if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 1:
+                        admin = _a.sent();
+                        if (admin.user_type_id !== _ID.SuperAdmin &&
+                            admin.user_type_id !== _ID.Admin) {
                             throw new Error(USER.USERS_LIST);
                         }
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.get_users()];
-                    case 2:
+                    case 3:
                         users = _a.sent();
                         return [2 /*return*/, users.filter(function (user) { return user.user_type_id !== _ID.SuperAdmin; })];
-                    case 3:
+                    case 4:
                         error_2 = _a.sent();
                         return [2 /*return*/, error_2.message];
-                    case 4: return [2 /*return*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
         this.create_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, password, user_id, user_type_id, username, isStrongPassword, IDs, oDALC, status_1, error_3;
+            var LAN, USER, user, user_id, username, password, user_type_id, admin, userByUsername, isStrongPassword, IDs, oDALC, status_1, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -117,23 +121,25 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         user = req.body;
-                        password = user.password;
-                        user_id = req.body.user_id;
-                        user_type_id = req.body.user_type_id;
-                        return [4 /*yield*/, UserModel.findOne({
-                                username: user.username
-                            }).exec()];
+                        user_id = user.user_id, username = user.username, password = user.password, user_type_id = user.user_type_id;
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
                     case 1:
-                        username = _a.sent();
+                        admin = _a.sent();
+                        return [4 /*yield*/, UserModel.findOne({
+                                username: username
+                            }).exec()];
+                    case 2:
+                        userByUsername = _a.sent();
                         isStrongPassword = validator.isStrongPassword(password);
                         IDs = Object.values(_ID);
-                        if (user_id !== _ID.SuperAdmin && user_id !== _ID.Admin) {
+                        if (admin.user_type_id !== _ID.SuperAdmin &&
+                            admin.user_type_id !== _ID.Admin) {
                             throw new Error(USER.USER_CREATION);
                         }
                         else if (user_type_id === _ID.SuperAdmin) {
                             throw new Error(USER.SA_CREATION);
                         }
-                        else if (username) {
+                        else if (userByUsername) {
                             throw new Error(USER.USERNAME);
                         }
                         else if (!isStrongPassword) {
@@ -142,25 +148,26 @@ var BLC = /** @class */ (function () {
                         else if (IDs.indexOf(user_type_id) === -1) {
                             throw new Error(USER.USER_TYPE_ID);
                         }
-                        _a.label = 2;
-                    case 2:
-                        _a.trys.push([2, 4, , 5]);
+                        delete user["user_id"];
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.create_user(user, password)];
-                    case 3:
+                    case 4:
                         status_1 = _a.sent();
                         return [2 /*return*/, status_1];
-                    case 4:
+                    case 5:
                         error_3 = _a.sent();
                         return [2 /*return*/, error_3.message];
-                    case 5: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
         this.delete_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, oDALC, status_2, error_4;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var LAN, USER, _a, user_id, _id, admin, user, oDALC, status_2, error_4;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         LAN = _LANGUAGE.getLanguage();
                         if (LAN === "AR") {
@@ -169,30 +176,39 @@ var BLC = /** @class */ (function () {
                         else {
                             USER = _MESSAGES.EN.USER;
                         }
-                        user = req.body;
-                        if (user.user_id !== _ID.SuperAdmin) {
+                        _a = req.body, user_id = _a.user_id, _id = _a._id;
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 1:
+                        admin = _b.sent();
+                        return [4 /*yield*/, UserModel.findById(_id).exec()];
+                    case 2:
+                        user = _b.sent();
+                        if (!user) {
+                            throw new Error(USER.INEXISTENT_USER);
+                        }
+                        else if (admin.user_type_id !== _ID.SuperAdmin) {
                             throw new Error(USER.USER_DELETION);
                         }
                         else if (user.user_type_id === _ID.SuperAdmin) {
                             throw new Error(USER.SA_DELETION);
                         }
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.delete_user(user._id)];
-                    case 2:
-                        status_2 = _a.sent();
-                        return [2 /*return*/, status_2];
+                        _b.label = 3;
                     case 3:
-                        error_4 = _a.sent();
+                        _b.trys.push([3, 5, , 6]);
+                        oDALC = new _DALC();
+                        return [4 /*yield*/, oDALC.delete_user(_id)];
+                    case 4:
+                        status_2 = _b.sent();
+                        return [2 /*return*/, status_2];
+                    case 5:
+                        error_4 = _b.sent();
                         return [2 /*return*/, error_4.message];
-                    case 4: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
         this.change_user_type = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, new_user_type, IDs, user_data, current_user_type, oDALC, status_3, error_5;
+            var LAN, USER, user, new_user_type, admin, user_type_id, IDs, user_data, current_user_type, oDALC, status_3, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -204,29 +220,32 @@ var BLC = /** @class */ (function () {
                             USER = _MESSAGES.EN.USER;
                         }
                         user = req.body;
-                        user_id = user.user_id;
                         new_user_type = user.user_type_id;
-                        IDs = Object.values(_ID);
-                        if (!(user_id !== _ID.SuperAdmin && user_id !== _ID.Admin)) return [3 /*break*/, 1];
-                        throw new Error(USER.USER_TYPE_CHANGE);
+                        return [4 /*yield*/, UserModel.findById(user.user_id).exec()];
                     case 1:
-                        if (!(user_id === 2 && new_user_type === _ID.Admin)) return [3 /*break*/, 2];
-                        throw new Error(USER.ADMIN_TYPE_ASSIGN);
+                        admin = _a.sent();
+                        user_type_id = admin.user_type_id;
+                        IDs = Object.values(_ID);
+                        if (!(user_type_id !== _ID.SuperAdmin && user_type_id !== _ID.Admin)) return [3 /*break*/, 2];
+                        throw new Error(USER.USER_TYPE_CHANGE);
                     case 2:
-                        if (!(new_user_type === _ID.SuperAdmin)) return [3 /*break*/, 3];
-                        throw new Error(USER.SA_TYPE_ASSIGN);
+                        if (!(user_type_id === _ID.Admin && new_user_type === _ID.Admin)) return [3 /*break*/, 3];
+                        throw new Error(USER.ADMIN_TYPE_ASSIGN);
                     case 3:
-                        if (!(IDs.indexOf(new_user_type) === -1)) return [3 /*break*/, 4];
+                        if (!(new_user_type === _ID.SuperAdmin)) return [3 /*break*/, 4];
+                        throw new Error(USER.SA_TYPE_ASSIGN);
+                    case 4:
+                        if (!(IDs.indexOf(new_user_type) === -1)) return [3 /*break*/, 5];
                         throw new Error(USER.USER_TYPE_ID);
-                    case 4: return [4 /*yield*/, UserModel.findById(user._id).exec()];
-                    case 5:
+                    case 5: return [4 /*yield*/, UserModel.findById(user._id).exec()];
+                    case 6:
                         user_data = _a.sent();
-                        if (user_data == null) {
+                        if (!user_data) {
                             throw new Error(USER.INEXISTENT_USER);
                         }
                         else {
                             current_user_type = user_data.user_type_id;
-                            if (user_id === 2 && current_user_type === _ID.Admin) {
+                            if (user_type_id === _ID.Admin && current_user_type === _ID.Admin) {
                                 throw new Error(USER.ADMIN_TYPE_CHANGE);
                             }
                             else if (current_user_type === _ID.SuperAdmin) {
@@ -236,23 +255,75 @@ var BLC = /** @class */ (function () {
                                 throw new Error(USER.UNCHANGED_USER_TYPE);
                             }
                         }
-                        _a.label = 6;
-                    case 6:
-                        _a.trys.push([6, 8, , 9]);
+                        _a.label = 7;
+                    case 7:
+                        _a.trys.push([7, 9, , 10]);
                         oDALC = new _DALC();
                         return [4 /*yield*/, oDALC.change_user_type(user._id, new_user_type)];
-                    case 7:
+                    case 8:
                         status_3 = _a.sent();
                         return [2 /*return*/, status_3];
-                    case 8:
+                    case 9:
                         error_5 = _a.sent();
                         return [2 /*return*/, error_5.message];
-                    case 9: return [2 /*return*/];
+                    case 10: return [2 /*return*/];
                 }
             });
         }); };
         this.change_location = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_type_id, location_id, user_data, oDALC, status_4, error_6;
+            var LAN, USER, _a, user_id, _id, location_id, admin, user, oDALC, status_4, error_6;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        LAN = _LANGUAGE.getLanguage();
+                        if (LAN === "AR") {
+                            USER = _MESSAGES.AR.USER;
+                        }
+                        else {
+                            USER = _MESSAGES.EN.USER;
+                        }
+                        _a = req.body, user_id = _a.user_id, _id = _a._id, location_id = _a.location_id;
+                        return [4 /*yield*/, UserModel.findById(user_id).exec()];
+                    case 1:
+                        admin = _b.sent();
+                        return [4 /*yield*/, UserModel.findById(_id).exec()];
+                    case 2:
+                        user = _b.sent();
+                        if (!user) {
+                            throw new Error(USER.INEXISTENT_USER);
+                        }
+                        else if (admin.user_type_id !== _ID.SuperAdmin &&
+                            admin.user_type_id !== _ID.Admin) {
+                            throw new Error(USER.LOCATION_CHANGE);
+                        }
+                        else if (admin.user_type_id === _ID.Admin &&
+                            user.user_type_id === _ID.Admin) {
+                            throw new Error(USER.ADMIN_LOCATION_CHANGE);
+                        }
+                        else if (user.user_type_id === _ID.SuperAdmin) {
+                            throw new Error(USER.SA_LOCATION_CHANGE);
+                        }
+                        else if (location_id === user.location_id.toString()) {
+                            throw new Error(USER.UNCHANGED_LOCATION);
+                        }
+                        _b.label = 3;
+                    case 3:
+                        _b.trys.push([3, 5, , 6]);
+                        oDALC = new _DALC();
+                        return [4 /*yield*/, oDALC.change_location(user._id, location_id)];
+                    case 4:
+                        status_4 = _b.sent();
+                        return [2 /*return*/, status_4];
+                    case 5:
+                        error_6 = _b.sent();
+                        return [2 /*return*/, error_6.message];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        }); };
+        // #endregion
+        this.authenticate_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
+            var LAN, USER, provided_data, credential, password, user_data, isValidPassword, oDALC, user, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -263,47 +334,38 @@ var BLC = /** @class */ (function () {
                         else {
                             USER = _MESSAGES.EN.USER;
                         }
-                        user = req.body;
-                        user_id = user.user_id;
-                        user_type_id = user.user_type_id;
-                        location_id = user.location_id;
-                        if (!(user_id !== _ID.SuperAdmin && user_id !== _ID.Admin)) return [3 /*break*/, 1];
-                        throw new Error(USER.LOCATION_CHANGE);
+                        provided_data = req.body;
+                        credential = provided_data.credential, password = provided_data.password;
+                        return [4 /*yield*/, UserModel.findOne({
+                                $or: [{ username: credential }, { email_address: credential }]
+                            }).exec()];
                     case 1:
-                        if (!(user_id === _ID.Admin && user_type_id === _ID.Admin)) return [3 /*break*/, 2];
-                        throw new Error(USER.ADMIN_LOCATION_CHANGE);
-                    case 2:
-                        if (!(user_type_id === _ID.SuperAdmin)) return [3 /*break*/, 3];
-                        throw new Error(USER.SA_LOCATION_CHANGE);
-                    case 3: return [4 /*yield*/, UserModel.findById(user._id).exec()];
-                    case 4:
                         user_data = _a.sent();
-                        if (user_data == null) {
-                            throw new Error(USER.INEXISTENT_USER);
+                        if (!user_data) {
+                            throw new Error(USER.CREDENTIAL_CHECK);
                         }
                         else {
-                            if (location_id === user_data.location_id.toString()) {
-                                throw new Error(USER.UNCHANGED_LOCATION);
-                            }
+                            isValidPassword = user_data.validPassword(password);
+                            if (!isValidPassword)
+                                throw new Error(USER.PASSWORD_CHECK);
                         }
-                        _a.label = 5;
-                    case 5:
-                        _a.trys.push([5, 7, , 8]);
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
                         oDALC = new _DALC();
-                        return [4 /*yield*/, oDALC.change_location(user._id, location_id)];
-                    case 6:
-                        status_4 = _a.sent();
-                        return [2 /*return*/, status_4];
-                    case 7:
-                        error_6 = _a.sent();
-                        return [2 /*return*/, error_6.message];
-                    case 8: return [2 /*return*/];
+                        return [4 /*yield*/, oDALC.authenticate_user(user_data)];
+                    case 3:
+                        user = _a.sent();
+                        return [2 /*return*/, user];
+                    case 4:
+                        error_7 = _a.sent();
+                        return [2 /*return*/, error_7.message];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
-        // #endregion
         this.get_all_users = function () { return __awaiter(_this, void 0, void 0, function () {
-            var oDALC, users, error_7;
+            var oDALC, users, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -314,14 +376,14 @@ var BLC = /** @class */ (function () {
                         users = _a.sent();
                         return [2 /*return*/, users];
                     case 2:
-                        error_7 = _a.sent();
-                        return [2 /*return*/, error_7.message];
+                        error_8 = _a.sent();
+                        return [2 /*return*/, error_8.message];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.get_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var user_id, oDALC, user, error_8;
+            var user_id, oDALC, user, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -335,14 +397,14 @@ var BLC = /** @class */ (function () {
                         user = _a.sent();
                         return [2 /*return*/, user];
                     case 3:
-                        error_8 = _a.sent();
-                        return [2 /*return*/, error_8.message];
+                        error_9 = _a.sent();
+                        return [2 /*return*/, error_9.message];
                     case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.edit_user = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, _id, username, email_address, first_name_en, first_name_ar, last_name_en, last_name_ar, full_address_en, full_address_ar, isValidEmail, isValidMobileNumber, userByUsername, userByEmail, userByID, user_type_id, oDALC, status_5, error_9;
+            var LAN, USER, currentUser, _id, username, email_address, first_name_en, first_name_ar, last_name_en, last_name_ar, full_address_en, full_address_ar, isValidEmail, isValidMobileNumber, userByUsername, userByEmail, userByID, user_type_id, oDALC, status_5, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -440,14 +502,14 @@ var BLC = /** @class */ (function () {
                         status_5 = _a.sent();
                         return [2 /*return*/, status_5];
                     case 19:
-                        error_9 = _a.sent();
-                        return [2 /*return*/, error_9.message];
+                        error_10 = _a.sent();
+                        return [2 /*return*/, error_10.message];
                     case 20: return [2 /*return*/];
                 }
             });
         }); };
         this.change_password = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, currentUser, user_id, oldPassword, newPassword, user, isValidPassword, isStrongPassword, oDALC, status_6, error_10;
+            var LAN, USER, currentUser, user_id, oldPassword, newPassword, user, isValidPassword, isStrongPassword, oDALC, status_6, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -494,14 +556,14 @@ var BLC = /** @class */ (function () {
                         status_6 = _a.sent();
                         return [2 /*return*/, status_6];
                     case 4:
-                        error_10 = _a.sent();
-                        return [2 /*return*/, error_10.message];
+                        error_11 = _a.sent();
+                        return [2 /*return*/, error_11.message];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         this.request_verification_code = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, verificationRequest, code, date, oDALC, status_7, error_11;
+            var LAN, USER, user, user_id, user_data, isVerified, isVerificationRequested, isProfileCompleted, verificationRequest, code, date, oDALC, status_7, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -551,14 +613,14 @@ var BLC = /** @class */ (function () {
                         // Send verification code by email
                         return [2 /*return*/, status_7];
                     case 10:
-                        error_11 = _a.sent();
-                        return [2 /*return*/, error_11.message];
+                        error_12 = _a.sent();
+                        return [2 /*return*/, error_12.message];
                     case 11: return [2 /*return*/];
                 }
             });
         }); };
         this.verify_account = function (req) { return __awaiter(_this, void 0, void 0, function () {
-            var LAN, USER, user, user_id, verfication_request, code, isExpired, date, now, difference, user_data, isVerified, oDALC, status_8, error_12;
+            var LAN, USER, user, user_id, verfication_request, code, isExpired, date, now, difference, user_data, isVerified, oDALC, status_8, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -611,8 +673,8 @@ var BLC = /** @class */ (function () {
                         status_8 = _a.sent();
                         return [2 /*return*/, status_8];
                     case 10:
-                        error_12 = _a.sent();
-                        return [2 /*return*/, error_12.message];
+                        error_13 = _a.sent();
+                        return [2 /*return*/, error_13.message];
                     case 11: return [2 /*return*/];
                 }
             });

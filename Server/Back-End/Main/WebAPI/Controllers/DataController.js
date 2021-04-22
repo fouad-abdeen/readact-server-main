@@ -39,7 +39,7 @@ var express = require("express");
 var router = express.Router();
 // Names of Routes
 var routes = require("../Names.Routes");
-var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser, changePassword = _a.changePassword, getUserTypes = _a.getUserTypes, changeUserType = _a.changeUserType, changeLocation = _a.changeLocation, requestVerificationCode = _a.requestVerificationCode, verifyAccount = _a.verifyAccount;
+var _a = routes.user, createUser = _a.createUser, getAllUsers = _a.getAllUsers, getSomeUsers = _a.getSomeUsers, getUser = _a.getUser, editUser = _a.editUser, deleteUser = _a.deleteUser, changePassword = _a.changePassword, getUserTypes = _a.getUserTypes, changeUserType = _a.changeUserType, changeLocation = _a.changeLocation, requestVerificationCode = _a.requestVerificationCode, verifyAccount = _a.verifyAccount, authenticate = _a.authenticate;
 // Business Logic Component
 var _BLC = require("../../BLC/BLC");
 // Language for Messages
@@ -182,8 +182,30 @@ var change_location = function (req, res) { return __awaiter(_this, void 0, void
     });
 }); };
 // #endregion
+var authenticate_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var oBLC, user, error_7;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                oBLC = new _BLC();
+                return [4 /*yield*/, oBLC.authenticate_user(req)];
+            case 1:
+                user = _a.sent();
+                res.send(user);
+                return [3 /*break*/, 3];
+            case 2:
+                error_7 = _a.sent();
+                res.status(500).send({
+                    message: error_7.message || "Some error occured while logging in"
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, users, error_7;
+    var oBLC, users, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -195,9 +217,9 @@ var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0
                 res.send(users);
                 return [3 /*break*/, 3];
             case 2:
-                error_7 = _a.sent();
+                error_8 = _a.sent();
                 res.status(500).send({
-                    message: error_7.message || "Some error occured while retrieving Users"
+                    message: error_8.message || "Some error occured while retrieving Users"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -205,7 +227,7 @@ var get_all_users = function (req, res) { return __awaiter(_this, void 0, void 0
     });
 }); };
 var get_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, user, error_8;
+    var oBLC, user, error_9;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -217,9 +239,9 @@ var get_user = function (req, res) { return __awaiter(_this, void 0, void 0, fun
                 res.send(user);
                 return [3 /*break*/, 3];
             case 2:
-                error_8 = _a.sent();
+                error_9 = _a.sent();
                 res.status(500).send({
-                    message: error_8.message || "Some error occured while retrieving your data"
+                    message: error_9.message || "Some error occured while retrieving your data"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -227,7 +249,7 @@ var get_user = function (req, res) { return __awaiter(_this, void 0, void 0, fun
     });
 }); };
 var edit_user = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, user_status, error_9;
+    var oBLC, user_status, error_10;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -239,9 +261,9 @@ var edit_user = function (req, res) { return __awaiter(_this, void 0, void 0, fu
                 res.send(user_status);
                 return [3 /*break*/, 3];
             case 2:
-                error_9 = _a.sent();
+                error_10 = _a.sent();
                 res.status(500).send({
-                    message: error_9.message || "Some error occured while updating your data"
+                    message: error_10.message || "Some error occured while updating your data"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -249,7 +271,7 @@ var edit_user = function (req, res) { return __awaiter(_this, void 0, void 0, fu
     });
 }); };
 var change_password = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, password_status, error_10;
+    var oBLC, password_status, error_11;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -261,9 +283,9 @@ var change_password = function (req, res) { return __awaiter(_this, void 0, void
                 res.send(password_status);
                 return [3 /*break*/, 3];
             case 2:
-                error_10 = _a.sent();
+                error_11 = _a.sent();
                 res.status(500).send({
-                    message: error_10.message || "Some error occured while changing your password"
+                    message: error_11.message || "Some error occured while changing your password"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -271,7 +293,7 @@ var change_password = function (req, res) { return __awaiter(_this, void 0, void
     });
 }); };
 var request_verification_code = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, request_status, error_11;
+    var oBLC, request_status, error_12;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -283,9 +305,9 @@ var request_verification_code = function (req, res) { return __awaiter(_this, vo
                 res.send(request_status);
                 return [3 /*break*/, 3];
             case 2:
-                error_11 = _a.sent();
+                error_12 = _a.sent();
                 res.status(500).send({
-                    message: error_11.message ||
+                    message: error_12.message ||
                         "Some error occured while requesting your account verification code"
                 });
                 return [3 /*break*/, 3];
@@ -294,7 +316,7 @@ var request_verification_code = function (req, res) { return __awaiter(_this, vo
     });
 }); };
 var verify_account = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var oBLC, verification_status, error_12;
+    var oBLC, verification_status, error_13;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -306,9 +328,9 @@ var verify_account = function (req, res) { return __awaiter(_this, void 0, void 
                 res.send(verification_status);
                 return [3 /*break*/, 3];
             case 2:
-                error_12 = _a.sent();
+                error_13 = _a.sent();
                 res.status(500).send({
-                    message: error_12.message || "Some error occured while verifiying your account"
+                    message: error_13.message || "Some error occured while verifiying your account"
                 });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -331,6 +353,7 @@ router.put("/" + verifyAccount, verify_account);
 router.get("/" + getUserTypes, get_all_user_types);
 router.put("/" + changeUserType, change_user_type);
 router.put("/" + changeLocation, change_location);
+router.get("/" + authenticate, authenticate_user);
 // #endregion
 // #region Language
 router.post("/" + routes.changeLanguage, function (req, res) {

@@ -16,6 +16,7 @@ const {
   changeLocation,
   requestVerificationCode,
   verifyAccount,
+  authenticate,
 } = routes.user;
 
 // Business Logic Component
@@ -107,6 +108,18 @@ const change_location = async (req, res) => {
   }
 };
 // #endregion
+
+const authenticate_user = async (req, res) => {
+  try {
+    const oBLC = new _BLC();
+    const user = await oBLC.authenticate_user(req);
+    res.send(user);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occured while logging in",
+    });
+  }
+};
 
 const get_all_users = async (req, res) => {
   try {
@@ -202,6 +215,7 @@ router.put("/" + verifyAccount, verify_account);
 router.get("/" + getUserTypes, get_all_user_types);
 router.put("/" + changeUserType, change_user_type);
 router.put("/" + changeLocation, change_location);
+router.get("/" + authenticate, authenticate_user);
 // #endregion
 
 // #region Language

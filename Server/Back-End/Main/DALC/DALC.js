@@ -129,7 +129,7 @@ var DALC = /** @class */ (function () {
                         return [4 /*yield*/, UserModel.findOneAndRemove({ _id: _id })];
                     case 2:
                         user = _a.sent();
-                        return [2 /*return*/, "" + user.username + USER.SUCCESSFULL_DELETETION];
+                        return [2 /*return*/, user.username + USER.SUCCESSFULL_DELETETION];
                     case 3:
                         error_4 = _a.sent();
                         return [2 /*return*/, error_4.message];
@@ -200,13 +200,14 @@ var DALC = /** @class */ (function () {
             });
         }); };
         // #endregion
+        this.authenticate_user = function (user) { return user; };
         this.get_user = function (_id) { return __awaiter(_this, void 0, void 0, function () {
             var user, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, UserModel.findOne({ _id: _id })];
+                        return [4 /*yield*/, UserModel.findById(_id)];
                     case 1:
                         user = _a.sent();
                         return [2 /*return*/, user];
