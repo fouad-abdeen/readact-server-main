@@ -22,6 +22,7 @@ const authorize = (req, res, next) => {
     jwt.verify(token, SECRET);
     next();
   } catch (error) {
+    console.error(error.message);
     res.status(401).send({ message: USER.UNAUTHORIZED });
   }
 };

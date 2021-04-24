@@ -1,7 +1,6 @@
-"use strict";
-
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const LocationSchema = new Schema({
   title_en: { type: String, required: true, unique: true },

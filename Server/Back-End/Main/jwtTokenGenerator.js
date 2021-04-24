@@ -1,12 +1,10 @@
-"use strict";
-
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
-const SECRET = process.env.TOKEN_SECRET;
+const secret = process.env.TOKEN_SECRET;
 
-const generateAccessToken = (user_data) =>
-  jwt.sign(user_data, SECRET, {
+const generateAccessToken = (payload) =>
+  jwt.sign(payload, secret, {
     expiresIn: 7200,
   });
 

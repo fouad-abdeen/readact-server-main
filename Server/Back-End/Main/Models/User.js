@@ -1,7 +1,8 @@
-"use strict";
+/* eslint-disable func-names */
 
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 const crypto = require("crypto");
 
 const UserSchema = new Schema(

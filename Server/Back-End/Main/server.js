@@ -1,5 +1,3 @@
-"use strict";
-
 require("./database");
 
 const express = require("express");

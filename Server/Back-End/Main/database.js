@@ -1,7 +1,8 @@
-"use strict";
+/* eslint-disable class-methods-use-this */
 
 require("dotenv").config();
-const DB = process.env.DB;
+
+const { DB } = process.env;
 const mongoose = require("mongoose");
 
 class Database {
@@ -20,7 +21,7 @@ class Database {
       .then(() => {
         console.log("Database connection successful");
       })
-      .catch((err) => {
+      .catch(() => {
         console.error("Database connection error");
       });
   }

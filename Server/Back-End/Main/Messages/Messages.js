@@ -1,5 +1,3 @@
-"use strict";
-
 const MESSAGES = {
   EN: {
     USER: {
@@ -61,6 +59,12 @@ const MESSAGES = {
       SUCCESSFULL_ACCOUNT_VERIFICATION:
         "Your account is verified successfully.",
     },
+    LOCATION: {
+      LOCATION_CREATION: "You have no privilege to add a new location!",
+      INVALID_LOCATION_TITLE: "Location's title is invalid!",
+      USED_LOCATION_TITLE: "Please enter a new location's title!",
+      SUCCESSFULL_CREATION: "The new location added successfully.",
+    },
   },
   AR: {
     USER: {
@@ -115,6 +119,12 @@ const MESSAGES = {
       SUCCESSFULL_VERIFICATION_CODE_REQUEST: `تم طلب رمز التحقق من حسابك( ِ) بنجاح
       رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
       SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
+    },
+    LOCATION: {
+      LOCATION_CREATION: "You have no privilege to add a new location!",
+      INVALID_LOCATION_TITLE: "Location's title is invalid!",
+      USED_LOCATION_TITLE: "Please enter a new location's title!",
+      SUCCESSFULL_CREATION: "تم إضافة الموقع الجديد بنجاح",
     },
   },
 };
