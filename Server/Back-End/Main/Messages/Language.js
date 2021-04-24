@@ -1,4 +1,4 @@
-let LANGUAGE;
+let LANGUAGE = "EN";
 
 exports.init = (L) => {
   LANGUAGE = L;

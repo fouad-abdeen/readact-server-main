@@ -121,9 +121,9 @@ const MESSAGES = {
       SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
     },
     LOCATION: {
-      LOCATION_CREATION: "You have no privilege to add a new location!",
-      INVALID_LOCATION_TITLE: "Location's title is invalid!",
-      USED_LOCATION_TITLE: "Please enter a new location's title!",
+      LOCATION_CREATION: "ليست لديك( ِ) الصلاحية لإضافة موقع جديد",
+      INVALID_LOCATION_TITLE: "عنوان الموقع غير صالح",
+      USED_LOCATION_TITLE: "رجاءً قم(ي) بإدخال عنوان جديد للموقع",
       SUCCESSFULL_CREATION: "تم إضافة الموقع الجديد بنجاح",
     },
   },

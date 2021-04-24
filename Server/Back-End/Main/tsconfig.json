@@ -1,6 +1,0 @@
-{
-  "target": "esnext",
-  "module": "commonjs",
-  "pretty": true,
-  "strict": true
-}

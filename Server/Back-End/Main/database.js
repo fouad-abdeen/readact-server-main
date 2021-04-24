@@ -7,10 +7,10 @@ const mongoose = require("mongoose");
 
 class Database {
   constructor() {
-    this._connect();
+    this.Connect();
   }
 
-  _connect() {
+  Connect() {
     mongoose
       .connect(DB, {
         useNewUrlParser: true,

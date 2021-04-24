@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 const express = require("express");
 
 const router = express.Router();
@@ -8,26 +6,26 @@ const router = express.Router();
 const routes = require("../Names.Routes");
 
 const {
-  authenticate,
-  createUser,
-  deleteUser,
-  getAllUsers,
-  getSomeUsers,
-  getUsersByLocation,
-  getUser,
-  editUser,
-  changePassword,
-  requestVerificationCode,
-  verifyAccount,
-  getUserTypes,
-  changeUserType,
-  changeLocation,
+  AUTHENTICATE,
+  CREATE_USER,
+  DELETE_USER,
+  GET_ALL_USERS,
+  GET_SOME_USERS,
+  GET_USERS_BY_LOCATION,
+  GET_USER,
+  EDIT_USER,
+  CHANGE_PASSWORD,
+  REQUEST_VERIFICATION_CODE,
+  VERIFY_ACCOUNT,
+  GET_USERS_TYPES,
+  CHANGE_USER_TYPE,
+  CHANGE_LOCATION,
 } = routes.user;
 const {
-  //  getAllLocations,
-  createLocation,
-  //  editLocation,
-  //  deleteLocation,
+  //  GET_ALL_LOCATIONS,
+  CREATE_LOCATION,
+  //  EDIT_LOCATION,
+  //  DELETE_LOCATION,
 } = routes.location;
 
 // JWT Authorization Middleware
@@ -36,20 +34,17 @@ const jwtAuth = require("../Middlewares/Auth");
 // Business Logic Component
 const BLC = require("../../BLC/BLC");
 
-// Language for Messages
-const LANGUAGE = require("../../Messages/Language");
-
 // Custom Code Generator
 const GENERATE_CODE = require("../../customCodeGenerator");
 
 // #region Controllers
 
 // #region User
-const get_all_user_types = async (req, res) => {
+const getAllUsersTypes = async (req, res) => {
   try {
     const oBLC = new BLC();
-    const user_types = await oBLC.get_all_user_types();
-    res.send(user_types);
+    const userTypes = await oBLC.getAllUsersTypes();
+    res.send(userTypes);
   } catch (error) {
     res.status(500).send({
       message:
@@ -60,10 +55,12 @@ const get_all_user_types = async (req, res) => {
 };
 
 // #region Admin Privileges
-const get_some_users = async (req, res) => {
+const getSomeUsers = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const users = await oBLC.get_some_users(req);
+    await oBLC.setLanguage(language);
+    const users = await oBLC.getSomeUsers(req);
     res.send(users);
   } catch (error) {
     res.status(500).send({
@@ -72,10 +69,12 @@ const get_some_users = async (req, res) => {
   }
 };
 
-const create_user = async (req, res) => {
+const createUser = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const userStatus = await oBLC.create_user(req);
+    await oBLC.setLanguage(language);
+    const userStatus = await oBLC.createUser(req);
     res.send(userStatus);
   } catch (error) {
     res.status(500).send({
@@ -85,11 +84,13 @@ const create_user = async (req, res) => {
   }
 };
 
-const delete_user = async (req, res) => {
+const deleteUser = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const user_status = await oBLC.delete_user(req);
-    res.send(user_status);
+    await oBLC.setLanguage(language);
+    const userStatus = await oBLC.deleteUser(req);
+    res.send(userStatus);
   } catch (error) {
     res.status(500).send({
       message:
@@ -98,10 +99,12 @@ const delete_user = async (req, res) => {
   }
 };
 
-const change_user_type = async (req, res) => {
+const changeUserType = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const status = await oBLC.change_user_type(req);
+    await oBLC.setLanguage(language);
+    const status = await oBLC.changeUserType(req);
     res.send(status);
   } catch (error) {
     res.status(500).send({
@@ -112,10 +115,12 @@ const change_user_type = async (req, res) => {
   }
 };
 
-const change_location = async (req, res) => {
+const changeLocation = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const status = await oBLC.change_location(req);
+    await oBLC.setLanguage(language);
+    const status = await oBLC.changeLocation(req);
     res.send(status);
   } catch (error) {
     res.status(500).send({
@@ -126,10 +131,12 @@ const change_location = async (req, res) => {
 };
 // #endregion
 
-const authenticate_user = async (req, res) => {
+const authenticateUser = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const user = await oBLC.authenticate_user(req);
+    await oBLC.setLanguage(language);
+    const user = await oBLC.authenticateUser(req);
     res.send(user);
   } catch (error) {
     res.status(500).send({
@@ -138,10 +145,10 @@ const authenticate_user = async (req, res) => {
   }
 };
 
-const get_all_users = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const oBLC = new BLC();
-    const users = await oBLC.get_all_users();
+    const users = await oBLC.getAllUsers();
     res.send(users);
   } catch (error) {
     res.status(500).send({
@@ -150,10 +157,10 @@ const get_all_users = async (req, res) => {
   }
 };
 
-const get_users_by_location = async (req, res) => {
+const getUsersByLocation = async (req, res) => {
   try {
     const oBLC = new BLC();
-    const users = await oBLC.get_users_by_location(req);
+    const users = await oBLC.getUsersByLocation(req);
     res.send(users);
   } catch (error) {
     res.status(500).send({
@@ -162,10 +169,10 @@ const get_users_by_location = async (req, res) => {
   }
 };
 
-const get_user = async (req, res) => {
+const getUser = async (req, res) => {
   try {
     const oBLC = new BLC();
-    const user = await oBLC.get_user(req);
+    const user = await oBLC.getUser(req);
     res.send(user);
   } catch (error) {
     res.status(500).send({
@@ -174,11 +181,13 @@ const get_user = async (req, res) => {
   }
 };
 
-const edit_user = async (req, res) => {
+const editUser = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const user_status = await oBLC.edit_user(req);
-    res.send(user_status);
+    await oBLC.setLanguage(language);
+    const userStatus = await oBLC.editUser(req);
+    res.send(userStatus);
   } catch (error) {
     res.status(500).send({
       message: error.message || "Some error occured while updating your data",
@@ -186,11 +195,13 @@ const edit_user = async (req, res) => {
   }
 };
 
-const change_password = async (req, res) => {
+const changePassword = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const password_status = await oBLC.change_password(req);
-    res.send(password_status);
+    await oBLC.setLanguage(language);
+    const passwordStatus = await oBLC.changePassword(req);
+    res.send(passwordStatus);
   } catch (error) {
     res.status(500).send({
       message:
@@ -199,11 +210,13 @@ const change_password = async (req, res) => {
   }
 };
 
-const request_verification_code = async (req, res) => {
+const requestVerificationCode = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const request_status = await oBLC.request_verification_code(req);
-    res.send(request_status);
+    await oBLC.setLanguage(language);
+    const requestStatus = await oBLC.requestVerificationCode(req);
+    res.send(requestStatus);
   } catch (error) {
     res.status(500).send({
       message:
@@ -213,11 +226,13 @@ const request_verification_code = async (req, res) => {
   }
 };
 
-const verify_account = async (req, res) => {
+const verifyAccount = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const verification_status = await oBLC.verify_account(req);
-    res.send(verification_status);
+    await oBLC.setLanguage(language);
+    const verificationStatus = await oBLC.verifyAccount(req);
+    res.send(verificationStatus);
   } catch (error) {
     res.status(500).send({
       message:
@@ -228,13 +243,14 @@ const verify_account = async (req, res) => {
 // #endregion
 
 // #region Location
-const create_location = async (req, res) => {
+const createLocation = async (req, res) => {
+  const { language } = req.body;
   try {
     const oBLC = new BLC();
-    const location_status = await oBLC.create_location(req);
-    res.send(location_status);
+    await oBLC.setLanguage(language);
+    const locationStatus = await oBLC.createLocation(req);
+    res.send(locationStatus);
   } catch (error) {
-    console.error(error);
     res.status(500).send({
       message:
         error.message || "Some error occured while creating the new location",
@@ -249,50 +265,30 @@ const create_location = async (req, res) => {
 // #region Routes
 
 // #region User
-router.get(`/${authenticate}`, authenticate_user);
-router.get(`/${getAllUsers}`, jwtAuth, get_all_users);
-router.get(`/${getSomeUsers}`, jwtAuth, get_some_users);
-router.get(`/${getUsersByLocation}`, jwtAuth, get_users_by_location);
-router.get(`/${getUser}`, jwtAuth, get_user);
-router.post(`/${createUser}`, jwtAuth, create_user);
-router.put(`/${editUser}`, jwtAuth, edit_user);
-router.delete(`/${deleteUser}`, jwtAuth, delete_user);
-router.put(`/${changePassword}`, jwtAuth, change_password);
-router.post(`/${requestVerificationCode}`, jwtAuth, request_verification_code);
-router.put(`/${verifyAccount}`, jwtAuth, verify_account);
-router.get(`/${getUserTypes}`, jwtAuth, get_all_user_types);
-router.put(`/${changeUserType}`, jwtAuth, change_user_type);
-router.put(`/${changeLocation}`, jwtAuth, change_location);
+router.get(`/${AUTHENTICATE}`, authenticateUser);
+router.get(`/${GET_ALL_USERS}`, jwtAuth, getAllUsers);
+router.get(`/${GET_SOME_USERS}`, jwtAuth, getSomeUsers);
+router.get(`/${GET_USERS_BY_LOCATION}`, jwtAuth, getUsersByLocation);
+router.get(`/${GET_USER}`, jwtAuth, getUser);
+router.post(`/${CREATE_USER}`, jwtAuth, createUser);
+router.put(`/${EDIT_USER}`, jwtAuth, editUser);
+router.delete(`/${DELETE_USER}`, jwtAuth, deleteUser);
+router.put(`/${CHANGE_PASSWORD}`, jwtAuth, changePassword);
+router.post(`/${REQUEST_VERIFICATION_CODE}`, jwtAuth, requestVerificationCode);
+router.put(`/${VERIFY_ACCOUNT}`, jwtAuth, verifyAccount);
+router.get(`/${GET_USERS_TYPES}`, jwtAuth, getAllUsersTypes);
+router.put(`/${CHANGE_USER_TYPE}`, jwtAuth, changeUserType);
+router.put(`/${CHANGE_LOCATION}`, jwtAuth, changeLocation);
 // #endregion
 
 // #region Location
-router.post(`/${createLocation}`, jwtAuth, create_location);
-// #endregion
-
-// #region Change Language
-router.post(`/${routes.changeLanguage}`, (req, res) => {
-  const { language } = req.body;
-
-  if (language !== "EN" && language !== "AR") {
-    throw new Error("Invalid Request!");
-  }
-
-  try {
-    LANGUAGE.init(language);
-    res.send(`Language changed to ${LANGUAGE.getLanguage()}`);
-  } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while changing the language",
-    });
-  }
-});
+router.post(`/${CREATE_LOCATION}`, jwtAuth, createLocation);
 // #endregion
 
 // #region Generate Custom Code
-router.get(`/${routes.generateCode}`, (req, res) => {
-  const { first_name, last_name } = req.body;
-  const code = GENERATE_CODE(first_name, last_name);
+router.get(`/${routes.GENERATE_CODE}`, (req, res) => {
+  const { firstName, lastName } = req.body;
+  const code = GENERATE_CODE(firstName, lastName);
 
   try {
     res.send(code);
