@@ -1,7 +1,15 @@
-let LANGUAGE = "EN";
+class Language {
+  constructor(language) {
+    this._language = language;
+  }
 
-exports.init = (L) => {
-  LANGUAGE = L;
-};
+  init(lan) {
+    this._language = lan;
+  }
 
-exports.getLanguage = () => LANGUAGE;
+  getLanguage() {
+    return this._language;
+  }
+}
+
+module.exports = new Language();

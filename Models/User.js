@@ -3,7 +3,10 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
+
 const crypto = require("crypto");
+
+// const compare = require("secure-compare");
 
 const UserSchema = new Schema(
   {
@@ -49,7 +52,8 @@ UserSchema.methods.validPassword = function (password) {
   const hash = crypto
     .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
     .toString(`hex`);
-  return this.hash === hash;
+
+  return crypto.timingSafeEqual(Buffer.from(this.hash), Buffer.from(hash));
 };
 
 const User = mongoose.model("users", UserSchema);

@@ -55,7 +55,7 @@ class DALC {
     const { USER } = MESSAGES[this._language];
     try {
       const user = await UserModel.findOneAndRemove({ _id });
-      return user.username + USER.SUCCESSFULL_DELETETION;
+      return user.username + USER.SUCCESSFULL_DELETION;
     } catch (error) {
       return error.message;
     }
@@ -181,12 +181,42 @@ class DALC {
   // #endregion
 
   // #region Location
+  getAllLocations() {
+    try {
+      return LocationModel.find({});
+    } catch (error) {
+      return error.message;
+    }
+  }
+
   async createLocation(location) {
     const { LOCATION } = MESSAGES[this._language];
     try {
       const newLocation = new LocationModel(location);
       await newLocation.save();
       return LOCATION.SUCCESSFULL_CREATION;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async editLocation(_id, location) {
+    const { LOCATION } = MESSAGES[this._language];
+    try {
+      await UserModel.findByIdAndUpdate({ _id }, location, {
+        new: true,
+      });
+      return LOCATION.SUCCESSFULL_UPDATE;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async deleteLocation(_id) {
+    const { LOCATION } = MESSAGES[this._language];
+    try {
+      await LocationModel.findOneAndRemove({ _id });
+      return LOCATION.SUCCESSFULL_DELETION;
     } catch (error) {
       return error.message;
     }

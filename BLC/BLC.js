@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 
+const crypto = require("crypto");
 const validator = require("validator");
 const moment = require("moment");
 
@@ -71,12 +72,20 @@ class BLC {
   async createUser(req) {
     const { USER } = MESSAGES[this._language];
     const user = req.body;
-    const { user_id, username, password, user_type_id } = user;
+    const {
+      user_id,
+      username,
+      password,
+      password_confirmation,
+      user_type_id,
+    } = user;
     const admin = await UserModel.findById(user_id).exec();
     const userByUsername = await UserModel.findOne({
       username,
     }).exec();
     const isStrongPassword = validator.isStrongPassword(password);
+    const isConfirmedPassword =
+      password.length === password_confirmation.length;
     const IDs = Object.values(ID);
 
     if (
@@ -90,12 +99,24 @@ class BLC {
       throw new Error(USER.USERNAME);
     } else if (!isStrongPassword) {
       throw new Error(USER.PASSWORD);
+    } else if (!isConfirmedPassword) {
+      throw new Error(USER.PASSWORD_CONFIRMATION);
     } else if (IDs.indexOf(user_type_id) === -1) {
       throw new Error(USER.USER_TYPEID);
+    } else {
+      const isTruelyConfirmedPassword = crypto.timingSafeEqual(
+        Buffer.from(password),
+        Buffer.from(password_confirmation)
+      );
+
+      if (!isTruelyConfirmedPassword) {
+        throw new Error(USER.PASSWORD_CONFIRMATION);
+      }
     }
 
-    delete user.user_id;
     delete user.language;
+    delete user.user_id;
+    delete user.password_confirmation;
 
     try {
       const oDALC = new DALC();
@@ -407,23 +428,34 @@ class BLC {
     const user_id = currentUser._id;
     const oldPassword = currentUser.password_check;
     const newPassword = currentUser.password;
+    const confirmationPassword = currentUser.password_confirmation;
     const user = await UserModel.findById(user_id).exec();
     const isValidPassword = user.validPassword(oldPassword);
     const isStrongPassword = validator.isStrongPassword(newPassword);
+    const isConfirmedPassword =
+      newPassword.length === confirmationPassword.length;
 
     if (!isValidPassword) {
       throw new Error(USER.PASSWORD_CHECK);
-    } else if (newPassword !== currentUser.password_confirmation) {
-      throw new Error(USER.PASSWORD_CONFIRMATION);
-    } else if (oldPassword === newPassword) {
-      throw new Error(USER.PASSWORD_UNCHANGED);
     } else if (!isStrongPassword) {
       throw new Error(USER.PASSWORD);
+    } else if (!isConfirmedPassword) {
+      throw new Error(USER.PASSWORD_CONFIRMATION);
     } else {
-      delete currentUser._id;
-      delete currentUser.password_check;
-      delete currentUser.password;
-      delete currentUser.password_confirmation;
+      const isRepeatedPassword = crypto.timingSafeEqual(
+        Buffer.from(oldPassword),
+        Buffer.from(newPassword)
+      );
+      const isPasswordTruelyConfirmed = crypto.timingSafeEqual(
+        Buffer.from(newPassword),
+        Buffer.from(confirmationPassword)
+      );
+
+      if (isRepeatedPassword) {
+        throw new Error(USER.PASSWORD_UNCHANGED);
+      } else if (!isPasswordTruelyConfirmed) {
+        throw new Error(USER.PASSWORD_CONFIRMATION);
+      }
     }
 
     try {
@@ -536,6 +568,17 @@ class BLC {
   //  #endregion
 
   // #region Location
+  // eslint-disable-next-line class-methods-use-this
+  async getAllLocations() {
+    try {
+      const oDALC = new DALC();
+      const locations = await oDALC.getAllLocations();
+      return locations;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
   async createLocation(req) {
     const { LOCATION } = MESSAGES[this._language];
     const location = req.body;
@@ -560,7 +603,65 @@ class BLC {
 
     try {
       const oDALC = new DALC();
-      const status = await oDALC.createLocation({ title_en, title_ar });
+      const status = await oDALC.createLocation({
+        title_en,
+        title_ar,
+        editable: true,
+        deletable: true,
+      });
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async editLocation(req) {
+    const { LOCATION } = MESSAGES[this._language];
+    const location = req.body;
+    const { user_id, _id, title_en, title_ar } = location;
+    const admin = await UserModel.findById(user_id).exec();
+    const choosen_location = await locationModel.findById(_id).exec();
+    const existing_location = await locationModel
+      .findOne({
+        $or: [{ title_en }, { title_ar }],
+      })
+      .exec();
+
+    if (admin.user_type_id !== ID.SuperAdmin) {
+      throw new Error(LOCATION.LOCATION_UPDATE);
+    } else if (!choosen_location.editable) {
+      throw new Error(LOCATION.UNEDITABLE_LOCATION);
+    } else if (typeof title_en !== "string" || typeof title_ar !== "string") {
+      throw new Error(LOCATION.INVALID_LOCATION_TITLE);
+    } else if (existing_location && existing_location._id.toString() !== _id) {
+      throw new Error(LOCATION.USED_LOCATION_TITLE);
+    }
+
+    try {
+      const oDALC = new DALC();
+      const status = oDALC.editLocation(_id, { title_en, title_ar });
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async deleteLocation(req) {
+    const { LOCATION } = MESSAGES[this._language];
+    const location = req.body;
+    const { user_id, _id } = location;
+    const admin = await UserModel.findById(user_id).exec();
+    const choosen_location = await locationModel.findById(_id).exec();
+
+    if (admin.user_type_id !== ID.SuperAdmin) {
+      throw new Error(LOCATION.LOCATION_DELETION);
+    } else if (!choosen_location.deletable) {
+      throw new Error(LOCATION.UNDELETABLE_LOCATION);
+    }
+
+    try {
+      const oDALC = new DALC();
+      const status = oDALC.deleteLocation(_id);
       return status;
     } catch (error) {
       return error.message;

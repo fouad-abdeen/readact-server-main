@@ -22,10 +22,10 @@ const {
   CHANGE_LOCATION,
 } = routes.user;
 const {
-  //  GET_ALL_LOCATIONS,
+  GET_ALL_LOCATIONS,
   CREATE_LOCATION,
-  //  EDIT_LOCATION,
-  //  DELETE_LOCATION,
+  EDIT_LOCATION,
+  DELETE_LOCATION,
 } = routes.location;
 
 // JWT Authorization Middleware
@@ -243,6 +243,18 @@ const verifyAccount = async (req, res) => {
 // #endregion
 
 // #region Location
+const getAllLocations = async (req, res) => {
+  try {
+    const oBLC = new BLC();
+    const locations = await oBLC.getAllLocations();
+    res.send(locations);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occured while retrieving Locations",
+    });
+  }
+};
+
 const createLocation = async (req, res) => {
   const { language } = req.body;
   try {
@@ -258,6 +270,35 @@ const createLocation = async (req, res) => {
   }
 };
 
+const editLocation = async (req, res) => {
+  const { language } = req.body;
+  try {
+    const oBLC = new BLC();
+    await oBLC.setLanguage(language);
+    const locationStatus = await oBLC.editLocation(req);
+    res.send(locationStatus);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while updating location's data",
+    });
+  }
+};
+
+const deleteLocation = async (req, res) => {
+  const { language } = req.body;
+  try {
+    const oBLC = new BLC();
+    await oBLC.setLanguage(language);
+    const locationStatus = await oBLC.deleteLocation(req);
+    res.send(locationStatus);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while deleting the location",
+    });
+  }
+};
 // #endregion
 
 // #endregion
@@ -282,7 +323,10 @@ router.put(`/${CHANGE_LOCATION}`, jwtAuth, changeLocation);
 // #endregion
 
 // #region Location
+router.get(`/${GET_ALL_LOCATIONS}`, jwtAuth, getAllLocations);
 router.post(`/${CREATE_LOCATION}`, jwtAuth, createLocation);
+router.put(`/${EDIT_LOCATION}`, jwtAuth, editLocation);
+router.delete(`/${DELETE_LOCATION}`, jwtAuth, deleteLocation);
 // #endregion
 
 // #region Generate Custom Code
