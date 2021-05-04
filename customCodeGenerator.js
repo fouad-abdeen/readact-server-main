@@ -12,7 +12,7 @@ const generateCode = (firstName, lastName) => {
   }
 
   try {
-    const CH1 = "ABCDEGHIJKLM".slice(0, FN.length);
+    const CH1 = "ABCDEFGHIJKLM".slice(0, FN.length);
     const CH2 = "nopqrstuvwxyz".slice(0, LN.length);
     const NOW = moment().format("YYYYMMDDHHmmssSS");
     const RANDOM = Math.random().toString().slice(10);
