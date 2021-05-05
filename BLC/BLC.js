@@ -250,7 +250,7 @@ class BLC {
     }
 
     const user_id = user_data._id;
-    const token = await generateAccessToken({ user_id }, 1);
+    const token = await generateAccessToken({ user_id }, 7200);
 
     try {
       return token;
