@@ -11,15 +11,22 @@ const DALC = require("../DALC/DALC");
 const MESSAGES = require("../Messages/Messages");
 const LANGUAGE = require("../Messages/Language");
 
-// Custom Code Generator for Account Verification & Password Reset
-const generateCustomCode = require("../customCodeGenerator");
+// Client Url Parts
+const {
+  MAIN_URL,
+  ACCOUNT_VERFICATION_ROUTE,
+  JWT_QUERY_STRING,
+} = require("../Config/Client");
 
 // JWT Token Generator for Authorization
 const generateAccessToken = require("../jwtTokenGenerator");
 
+// JWT Decoding for Account Verification and Password Reset
+const decodeToken = require("../jwtTokenDecoder");
+
 // Mongoose Models
 const UserModel = require("../Models/User");
-const VerificationCodeModel = require("../Models/AccountVerificationCode");
+const VerificationRequestModel = require("../Models/AccountVerificationRequest");
 const locationModel = require("../Models/Location");
 
 // User Types Ids
@@ -242,11 +249,11 @@ class BLC {
       if (!isValidPassword) throw new Error(USER.PASSWORD_CHECK);
     }
 
-    const { _id, username } = user_data;
-    const token = await generateAccessToken({ _id, username });
+    const user_id = user_data._id;
+    const token = await generateAccessToken({ user_id }, 1);
 
     try {
-      return { token, _id, username };
+      return token;
     } catch (error) {
       return error.message;
     }
@@ -318,8 +325,8 @@ class BLC {
   async editUser(req) {
     const { USER } = MESSAGES[this._language];
     const currentUser = req.body;
+    const _id = currentUser.user_id;
     const {
-      _id,
       username,
       email_address,
       first_name_en,
@@ -395,7 +402,6 @@ class BLC {
             delete currentUser._id;
             delete currentUser.password;
             delete currentUser.is_verified;
-            delete currentUser.is_verification_requested;
             delete currentUser.email_address_confirmation;
             delete currentUser.user_type_id;
             delete currentUser.location_id;
@@ -403,7 +409,6 @@ class BLC {
             delete currentUser._id;
             delete currentUser.password;
             delete currentUser.is_verified;
-            delete currentUser.is_verification_requested;
             delete currentUser.email_address_confirmation;
             delete currentUser.user_type_id;
           }
@@ -425,7 +430,7 @@ class BLC {
   async changePassword(req) {
     const { USER } = MESSAGES[this._language];
     const currentUser = req.body;
-    const user_id = currentUser._id;
+    const { user_id } = currentUser;
     const oldPassword = currentUser.password_check;
     const newPassword = currentUser.password;
     const confirmationPassword = currentUser.password_confirmation;
@@ -467,44 +472,52 @@ class BLC {
     }
   }
 
-  async requestVerificationCode(req) {
+  async requestVerification(req) {
     const { USER } = MESSAGES[this._language];
     const user = req.body;
-    const user_id = user._id;
+    const { user_id } = user;
     const user_data = await UserModel.findById(user_id).exec();
 
     const isVerified = user_data.is_verified;
-    const isVerificationRequested = user_data.is_verification_requested;
     const isProfileCompleted = user_data.is_profile_completed;
 
-    if (!isProfileCompleted) {
-      throw new Error(USER.ICOMPLETE_PROFILE);
-    } else if (isVerificationRequested && !isVerified) {
-      throw new Error(USER.REQUESTED_VERIFICATION);
-    } else if (isVerified) {
-      throw new Error(USER.VERIFIED_ACCOUNT);
-    } else {
-      const verificationRequest = await VerificationCodeModel.findOne({
-        user_id,
-      }).exec();
+    const verificationRequest = await VerificationRequestModel.findOne({
+      user_id,
+    }).exec();
 
-      if (verificationRequest) {
+    if (verificationRequest && !isVerified) {
+      const date = verificationRequest.request_date;
+      const now = moment();
+      const difference = now.diff(date, "hours");
+
+      if (difference > 48) {
+        await VerificationRequestModel.findOneAndRemove({ user_id });
+      } else {
         throw new Error(USER.REQUESTED_VERIFICATION);
       }
+    } else if (!isProfileCompleted) {
+      throw new Error(USER.ICOMPLETE_PROFILE);
+    } else if (isVerified) {
+      throw new Error(USER.VERIFIED_ACCOUNT);
     }
 
-    const code = await generateCustomCode(
-      user.first_name_en,
-      user.last_name_en
-    );
+    const token = await generateAccessToken({ user_id }, 172800);
+    const url =
+      MAIN_URL +
+      this._language.toLowerCase() +
+      ACCOUNT_VERFICATION_ROUTE +
+      JWT_QUERY_STRING +
+      token;
+
+    console.log(url);
+
     const date = moment();
 
     try {
       const oDALC = new DALC();
-      const status = await oDALC.requestVerificationCode(
+      const status = await oDALC.requestVerification(
         user_id,
         user.email_address,
-        code,
         date
       );
 
@@ -518,37 +531,24 @@ class BLC {
 
   async verifyAccount(req) {
     const { USER } = MESSAGES[this._language];
-    const user = req.body;
-    const user_id = user._id;
-    const verfication_request = await VerificationCodeModel.findOne({
+    const { token } = req.body;
+    const decodedTokenResult = decodeToken(token);
+    const mockedResult = decodedTokenResult.toString().split(" ");
+
+    if (mockedResult[0] === "invalid" || mockedResult[0] === "Unexpected") {
+      throw new Error(USER.VERIFICATION_URL);
+    } else if (mockedResult[1] === "expired") {
+      throw new Error(USER.EXPIRED_VERIFICATION_URL);
+    }
+
+    const { user_id } = decodedTokenResult;
+    const verfication_request = await VerificationRequestModel.findOne({
       user_id,
     }).exec();
 
     if (!verfication_request) {
-      throw new Error(USER.INEXISTENT_VERIFICATION_CODE);
+      throw new Error(USER.INEXISTENT_VERIFICATION_REQUEST);
     } else {
-      const { code } = verfication_request;
-      const isExpired = verfication_request.is_expired;
-      const date = verfication_request.request_date;
-
-      if (code !== user.code) {
-        throw new Error(USER.VERIFICATION_CODE);
-      } else if (isExpired) {
-        throw new Error(USER.EXPIRED_VERIFICATION_CODE);
-      } else {
-        const now = moment();
-        const difference = now.diff(date, "hours");
-
-        if (difference > 48) {
-          await VerificationCodeModel.findOneAndUpdate(
-            { code },
-            { is_expired: true }
-          );
-
-          throw new Error(USER.EXPIRED_VERIFICATION_CODE);
-        }
-      }
-
       const user_data = await UserModel.findById(user_id).exec();
       const isVerified = user_data.is_verified;
 
@@ -655,6 +655,8 @@ class BLC {
 
     if (admin.user_type_id !== ID.SuperAdmin) {
       throw new Error(LOCATION.LOCATION_DELETION);
+    } else if (!choosen_location) {
+      throw new Error(LOCATION.INEXISTENT_LOCATION);
     } else if (!choosen_location.deletable) {
       throw new Error(LOCATION.UNDELETABLE_LOCATION);
     }

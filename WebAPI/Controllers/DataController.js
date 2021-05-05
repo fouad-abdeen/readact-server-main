@@ -15,7 +15,7 @@ const {
   GET_USER,
   EDIT_USER,
   CHANGE_PASSWORD,
-  REQUEST_VERIFICATION_CODE,
+  REQUEST_VERIFICATION,
   VERIFY_ACCOUNT,
   GET_USERS_TYPES,
   CHANGE_USER_TYPE,
@@ -59,7 +59,7 @@ const getSomeUsers = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const users = await oBLC.getSomeUsers(req);
     res.send(users);
   } catch (error) {
@@ -73,7 +73,7 @@ const createUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const userStatus = await oBLC.createUser(req);
     res.send(userStatus);
   } catch (error) {
@@ -88,7 +88,7 @@ const deleteUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const userStatus = await oBLC.deleteUser(req);
     res.send(userStatus);
   } catch (error) {
@@ -103,7 +103,7 @@ const changeUserType = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const status = await oBLC.changeUserType(req);
     res.send(status);
   } catch (error) {
@@ -119,7 +119,7 @@ const changeLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const status = await oBLC.changeLocation(req);
     res.send(status);
   } catch (error) {
@@ -135,7 +135,7 @@ const authenticateUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const user = await oBLC.authenticateUser(req);
     res.send(user);
   } catch (error) {
@@ -185,7 +185,7 @@ const editUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const userStatus = await oBLC.editUser(req);
     res.send(userStatus);
   } catch (error) {
@@ -199,7 +199,7 @@ const changePassword = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const passwordStatus = await oBLC.changePassword(req);
     res.send(passwordStatus);
   } catch (error) {
@@ -210,18 +210,18 @@ const changePassword = async (req, res) => {
   }
 };
 
-const requestVerificationCode = async (req, res) => {
+const requestVerification = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
-    const requestStatus = await oBLC.requestVerificationCode(req);
+    await oBLC.setLanguage(language.toUpperCase());
+    const requestStatus = await oBLC.requestVerification(req);
     res.send(requestStatus);
   } catch (error) {
     res.status(500).send({
       message:
         error.message ||
-        "Some error occured while requesting your account verification code",
+        "Some error occured while requesting your account verification URL",
     });
   }
 };
@@ -230,7 +230,7 @@ const verifyAccount = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const verificationStatus = await oBLC.verifyAccount(req);
     res.send(verificationStatus);
   } catch (error) {
@@ -259,7 +259,7 @@ const createLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const locationStatus = await oBLC.createLocation(req);
     res.send(locationStatus);
   } catch (error) {
@@ -274,7 +274,7 @@ const editLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const locationStatus = await oBLC.editLocation(req);
     res.send(locationStatus);
   } catch (error) {
@@ -289,7 +289,7 @@ const deleteLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(language);
+    await oBLC.setLanguage(language.toUpperCase());
     const locationStatus = await oBLC.deleteLocation(req);
     res.send(locationStatus);
   } catch (error) {
@@ -315,8 +315,8 @@ router.post(`/${CREATE_USER}`, jwtAuth, createUser);
 router.put(`/${EDIT_USER}`, jwtAuth, editUser);
 router.delete(`/${DELETE_USER}`, jwtAuth, deleteUser);
 router.put(`/${CHANGE_PASSWORD}`, jwtAuth, changePassword);
-router.post(`/${REQUEST_VERIFICATION_CODE}`, jwtAuth, requestVerificationCode);
-router.put(`/${VERIFY_ACCOUNT}`, jwtAuth, verifyAccount);
+router.post(`/${REQUEST_VERIFICATION}`, jwtAuth, requestVerification);
+router.put(`/${VERIFY_ACCOUNT}`, verifyAccount);
 router.get(`/${GET_USERS_TYPES}`, jwtAuth, getAllUsersTypes);
 router.put(`/${CHANGE_USER_TYPE}`, jwtAuth, changeUserType);
 router.put(`/${CHANGE_LOCATION}`, jwtAuth, changeLocation);

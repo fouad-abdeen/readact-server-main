@@ -16,12 +16,12 @@ const MESSAGES = {
       EMAIL_EXISTS: "Email exists! Please choose another one.",
       ICOMPLETE_PROFILE: "Your profile is incomplete!",
       REQUESTED_VERIFICATION:
-        "You've requested the account verification code before now! Please check your email inbox.",
+        "You've requested the account verification URL before now! Please check your email inbox.",
       VERIFIED_ACCOUNT: "Your account is already verified!",
-      VERIFICATION_CODE: "Provided account verification code is incorrect!",
-      EXPIRED_VERIFICATION_CODE: "Your account verification code is expired!",
-      INEXISTENT_VERIFICATION_CODE:
-        "You didn't request a verification code before!",
+      VERIFICATION_URL: "Provided account verification URL is incorrect!",
+      EXPIRED_VERIFICATION_URL: "Your account verification URL is expired!",
+      INEXISTENT_VERIFICATION_REQUEST:
+        "You didn't request a verification URL before!",
       USER_TYPE_ID: "Invalid User Account's Type!",
       USERS_LIST: "You have no privilege to retrieve users list!",
       USER_CREATION: "You have no privilege to create a user account!",
@@ -54,7 +54,7 @@ const MESSAGES = {
       SUCCESSFULL_USER_TYPE_CHANGE:
         "User account's type changed successfully to ",
       SUCCESSFULL_LOCATION_CHANGE: "User's location changed successfully to ",
-      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `Your account verification code has been successfully requested.
+      SUCCESSFULL_VERIFICATION_URL_REQUEST: `Your account verification URL has been successfully requested.
       Please check your email inbox and enter the code within 48 hours.`,
       SUCCESSFULL_ACCOUNT_VERIFICATION:
         "Your account is verified successfully.",
@@ -67,6 +67,7 @@ const MESSAGES = {
       UNEDITABLE_LOCATION: "You can't update this locations's data!",
       LOCATION_DELETION: "You have no privilege to delete a location!",
       UNDELETABLE_LOCATION: "You can't delete this location!",
+      INEXISTENT_LOCATION: "The location is inexistent!",
       SUCCESSFULL_CREATION: "The new location added successfully.",
       SUCCESSFULL_UPDATE: "Location's data updated successfully.",
       SUCCESSFULL_DELETION: "The location deleted successfully.",
@@ -88,13 +89,12 @@ const MESSAGES = {
       EMAIL_EXISTS: "البريد الإلكتروني موجود مسبقًا، رجاءً اختر واحد آخر",
       ICOMPLETE_PROFILE: "ملف حسابك غير مكتمل",
       REQUESTED_VERIFICATION:
-        "لقد طالبت( ِ) برمز التحقق من حسابك( ِ) قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
+        "لقد طالبت( ِ) برابط التحقق من حسابك( ِ) قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
       VERIFIED_ACCOUNT: "تم التحقق من حسابك( ِ) قبل الآن",
-      VERIFICATION_CODE: "إن رمز التحقق من الحساب الذي تم إدخاله غير صحيح",
-      EXPIRED_VERIFICATION_CODE:
-        "إن رمز رمز التحقق من حسابك( ِ) منتهي الصلاحية",
-      INEXISTENT_VERIFICATION_CODE:
-        "أنت( ِ) لم تقم(ي) بطلب رمز التحقق من الحساب قبل الآن",
+      VERIFICATION_URL: "إن رابط التحقق من الحساب الذي تم إدخاله غير صحيح",
+      EXPIRED_VERIFICATION_URL: "إن رابط التحقق من حسابك( ِ) منتهي الصلاحية",
+      INEXISTENT_VERIFICATION_REQUEST:
+        "أنت( ِ) لم تقم(ي) بطلب رابط التحقق من الحساب قبل الآن",
       USER_TYPE_ID: "نوع حساب المستخدم غير صالح",
       USERS_LIST: "ليست لديك( ِ) الصلاحية للحصول على اللائحة بالمستخدمين",
       USER_CREATION: "ليست لديك( ِ) الصلاحية لإضافة حساب المستخدم",
@@ -122,7 +122,7 @@ const MESSAGES = {
       SUCCESSFULL_DELETION: " تمت بنجاح عملبة حذف حساب",
       SUCCESSFULL_USER_TYPE_CHANGE: "تم تعديل نوع حساب المستخدم بنجاح إلى ",
       SUCCESSFULL_LOCATION_CHANGE: "تم تعديل موقع المستخدم إلى ",
-      SUCCESSFULL_VERIFICATION_CODE_REQUEST: `تم طلب رمز التحقق من حسابك( ِ) بنجاح
+      SUCCESSFULL_VERIFICATION_URL_REQUEST: `تم طلب رابط التحقق من حسابك( ِ) بنجاح
       رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
       SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
     },
@@ -134,6 +134,7 @@ const MESSAGES = {
       UNEDITABLE_LOCATION: "لا يمكنك( ِ) تعديل بيانات هذا الموقع",
       LOCATION_DELETION: "ليست لديك( ِ) الصلاحية لحذف أي موقع",
       UNDELETABLE_LOCATION: "لا يمكنك( ِ) حذف هذا الموقع",
+      INEXISTENT_LOCATION: "إن الموقع غير موجود في الأساس",
       SUCCESSFULL_CREATION: "تم إضافة الموقع الجديد بنجاح",
       SUCCESSFULL_UPDATE: "تم تعديل بيانات الموقع بنجاح",
       SUCCESSFULL_DELETION: "تم حذف الموقع بنجاح",

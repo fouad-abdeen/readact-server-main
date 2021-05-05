@@ -9,7 +9,7 @@ const routes = {
     GET_USER: "getUserById",
     EDIT_USER: "editUser",
     CHANGE_PASSWORD: "changePassword",
-    REQUEST_VERIFICATION_CODE: "requestVerificationCode",
+    REQUEST_VERIFICATION: "requestAccountVerification",
     VERIFY_ACCOUNT: "verifyAccount",
     GET_USERS_TYPES: "getAllUserTypes",
     CHANGE_USER_TYPE: "changeUserType",

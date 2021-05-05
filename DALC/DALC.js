@@ -5,7 +5,7 @@
 const UserModel = require("../Models/User");
 const UserTypeModel = require("../Models/UserType");
 const LocationModel = require("../Models/Location");
-const VerificationCodeModel = require("../Models/AccountVerificationCode");
+const VerificationRequestModel = require("../Models/AccountVerificationRequest");
 
 // Messages
 const MESSAGES = require("../Messages/Messages");
@@ -145,24 +145,17 @@ class DALC {
     }
   }
 
-  async requestVerificationCode(user_id, email_address, code, request_date) {
+  async requestVerification(user_id, email_address, request_date) {
     const { USER } = MESSAGES[this._language];
     try {
-      const VerficationCodeDoc = new VerificationCodeModel({
+      const VerificationRequestDoc = new VerificationRequestModel({
         user_id,
         email_address,
-        code,
         request_date,
-        is_expired: false,
       });
-      await VerficationCodeDoc.save();
+      await VerificationRequestDoc.save();
 
-      await UserModel.findByIdAndUpdate(
-        { _id: user_id },
-        { is_verification_requested: true }
-      );
-
-      return USER.SUCCESSFULL_VERIFICATION_CODE_REQUEST;
+      return USER.SUCCESSFULL_VERIFICATION_URL_REQUEST;
     } catch (error) {
       return error.message;
     }
