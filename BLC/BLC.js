@@ -474,8 +474,7 @@ class BLC {
 
   async requestVerification(req) {
     const { USER } = MESSAGES[this._language];
-    const user = req.body;
-    const { user_id } = user;
+    const { user_id } = req.body;
     const user_data = await UserModel.findById(user_id).exec();
 
     const isVerified = user_data.is_verified;
@@ -517,11 +516,11 @@ class BLC {
       const oDALC = new DALC();
       const status = await oDALC.requestVerification(
         user_id,
-        user.email_address,
+        user_data.email_address,
         date
       );
 
-      // Send verification code by email
+      // Send verification URL by email
 
       return status;
     } catch (error) {
