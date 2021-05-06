@@ -16,20 +16,36 @@ const {
   MAIN_URL,
   ACCOUNT_VERFICATION_ROUTE,
   JWT_QUERY_STRING,
-} = require("../Config/Client");
+} = require("../Config/client");
 
+// #region Helpers
 // JWT Token Generator for Authorization
-const generateAccessToken = require("../jwtTokenGenerator");
+const generateAccessToken = require("../Helpers/jwtTokenGenerator");
 
-// JWT Decoding for Account Verification and Password Reset
-const decodeToken = require("../jwtTokenDecoder");
+// JWT Decoder for Account Verification and Password Reset
+const decodeToken = require("../Helpers/jwtTokenDecoder");
+
+// Difference Between Now and a Certain Date in Hours
+const getHoursDifference = require("../Helpers/hrsDiffGetter");
+
+// Emails Content (Subject & HTML Body)
+const {
+  verificationEmailEnSubject,
+  verificationEmailArSubject,
+  setEnVerificationEmail,
+  setArVerificationEmail,
+} = require("../Helpers/emailContentSetters");
+// #endregion
+
+// Email Service
+const email = require("../Services/EmailService");
 
 // Mongoose Models
 const UserModel = require("../Models/User");
 const VerificationRequestModel = require("../Models/AccountVerificationRequest");
-const locationModel = require("../Models/Location");
+const Locationmodel = require("../Models/Location");
 
-// User Types Ids
+// User Types (Roles) Ids
 const ID = require("./UserTypes");
 
 class BLC {
@@ -476,6 +492,7 @@ class BLC {
     const { USER } = MESSAGES[this._language];
     const { user_id } = req.body;
     const user_data = await UserModel.findById(user_id).exec();
+    const { first_name_en, first_name_ar, email_address } = user_data;
 
     const isVerified = user_data.is_verified;
     const isProfileCompleted = user_data.is_profile_completed;
@@ -485,9 +502,8 @@ class BLC {
     }).exec();
 
     if (verificationRequest && !isVerified) {
-      const date = verificationRequest.request_date;
-      const now = moment();
-      const difference = now.diff(date, "hours");
+      const { request_date } = verificationRequest;
+      const difference = getHoursDifference(request_date);
 
       if (difference > 48) {
         await VerificationRequestModel.findOneAndRemove({ user_id });
@@ -508,7 +524,30 @@ class BLC {
       JWT_QUERY_STRING +
       token;
 
-    console.log(url);
+    let mailSubject;
+    let mailBody;
+
+    if (this._language === "AR") {
+      mailSubject = verificationEmailArSubject;
+      mailBody = setArVerificationEmail(first_name_ar, email_address, url);
+    } else {
+      mailSubject = verificationEmailEnSubject;
+      mailBody = setEnVerificationEmail(first_name_en, email_address, url);
+    }
+
+    const mailOptions = email.setMailOptions(
+      email_address,
+      mailSubject,
+      mailBody
+    );
+
+    email.transporter.sendMail(mailOptions, (err) => {
+      if (err) {
+        console.log(`Error ${err}`);
+      } else {
+        console.log("Email sent successfully");
+      }
+    });
 
     const date = moment();
 
@@ -583,11 +622,9 @@ class BLC {
     const location = req.body;
     const { user_id, title_en, title_ar } = location;
     const admin = await UserModel.findById(user_id).exec();
-    const existing_location = await locationModel
-      .findOne({
-        $or: [{ title_en }, { title_ar }],
-      })
-      .exec();
+    const existing_location = await Locationmodel.findOne({
+      $or: [{ title_en }, { title_ar }],
+    }).exec();
 
     if (
       admin.user_type_id !== ID.SuperAdmin &&
@@ -619,12 +656,10 @@ class BLC {
     const location = req.body;
     const { user_id, _id, title_en, title_ar } = location;
     const admin = await UserModel.findById(user_id).exec();
-    const choosen_location = await locationModel.findById(_id).exec();
-    const existing_location = await locationModel
-      .findOne({
-        $or: [{ title_en }, { title_ar }],
-      })
-      .exec();
+    const choosen_location = await Locationmodel.findById(_id).exec();
+    const existing_location = await Locationmodel.findOne({
+      $or: [{ title_en }, { title_ar }],
+    }).exec();
 
     if (admin.user_type_id !== ID.SuperAdmin) {
       throw new Error(LOCATION.LOCATION_UPDATE);
@@ -650,7 +685,7 @@ class BLC {
     const location = req.body;
     const { user_id, _id } = location;
     const admin = await UserModel.findById(user_id).exec();
-    const choosen_location = await locationModel.findById(_id).exec();
+    const choosen_location = await Locationmodel.findById(_id).exec();
 
     if (admin.user_type_id !== ID.SuperAdmin) {
       throw new Error(LOCATION.LOCATION_DELETION);
