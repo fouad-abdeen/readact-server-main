@@ -39,6 +39,7 @@ const setEnVerificationEmail = (name, email, url) => `
       <a
         href="${url}"
         target="_blank"
+        rel="noopener noreferrer"
         style="
           border-radius: 26.5px;
           background-color: #ff6150;
@@ -112,6 +113,7 @@ const setArVerificationEmail = (name, email, url) => `
       <a
         href="${url}"
         target="_blank"
+        rel="noopener noreferrer"
         style="
           border-radius: 26.5px;
           background-color: #ff6150;
