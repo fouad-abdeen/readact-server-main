@@ -14,14 +14,25 @@ const MESSAGES = {
         "The home address must consist of at least 20 characters!",
       EMAIL_CONFIRMATION: "Please confirm your email!",
       EMAIL_EXISTS: "Email exists! Please choose another one.",
-      ICOMPLETE_PROFILE: "Your profile is incomplete!",
-      REQUESTED_VERIFICATION:
-        "You've requested the account verification URL before now! Please check your email inbox.",
+      INCOMPLETE_PROFILE: "Your profile is incomplete!",
+      REQUESTED_VERIFICATION: (hr) =>
+        `You've requested the account verification URL before now! Please check your email inbox within ${hr} hr(s).`,
       VERIFIED_ACCOUNT: "Your account is already verified!",
       VERIFICATION_URL: "Provided account verification URL is incorrect!",
       EXPIRED_VERIFICATION_URL: "Your account verification URL is expired!",
       INEXISTENT_VERIFICATION_REQUEST:
         "You didn't request a verification URL before!",
+      FAILED_MAIL: "Email failed to send! Please try again later.",
+      REQUESTED_PASSWORD_RESET: (hr) =>
+        `You've requested the password reset URL before now! Please check your email inbox within ${hr} hr(s).`,
+      PASSWORD_RESET_NOT_REQUESTABLE: (hr) =>
+        `You can only request a password reset after ${hr} hr(s).`,
+      UNVERIFIED_ACCOUNT:
+        "Your account is not verified! Please verify your account before requesting a password reset or resetting the password.",
+      PASSWORD_RESET_URL: "Provided password reset URL is incorrect!",
+      EXPIRED_PASSWORD_RESET_URL: "Your password reset URL is expired!",
+      INEXISTENT_PASSWORD_RESET_REQUEST:
+        "You didn't request a password reset URL before!",
       USER_TYPE_ID: "Invalid User Account's Type!",
       USERS_LIST: "You have no privilege to retrieve users list!",
       USER_CREATION: "You have no privilege to create a user account!",
@@ -55,7 +66,9 @@ const MESSAGES = {
         "User account's type changed successfully to ",
       SUCCESSFULL_LOCATION_CHANGE: "User's location changed successfully to ",
       SUCCESSFULL_VERIFICATION_URL_REQUEST: `Your account verification URL has been successfully requested.
-      Please check your email inbox and enter the code within 48 hours.`,
+      Please check your email inbox within 48 hours.`,
+      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST: `Your password reset URL has been successfully requested.
+      Please check your email inbox within 24 hours.`,
       SUCCESSFULL_ACCOUNT_VERIFICATION:
         "Your account is verified successfully.",
     },
@@ -87,14 +100,28 @@ const MESSAGES = {
       ADDRESS_LENGTH: "يجب أن يتكوّن عنوان المنزل من 20 حرف على الأقل",
       EMAIL_CONFIRMATION: "رجاءً قم(ي) بتأكيد بريدك( ِ)الإلكتروني",
       EMAIL_EXISTS: "البريد الإلكتروني موجود مسبقًا، رجاءً اختر واحد آخر",
-      ICOMPLETE_PROFILE: "ملف حسابك غير مكتمل",
-      REQUESTED_VERIFICATION:
-        "لقد طالبت( ِ) برابط التحقق من حسابك( ِ) قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني",
+      INCOMPLETE_PROFILE: "ملف حسابك غير مكتمل",
+      REQUESTED_VERIFICATION: (hr) =>
+        `لقد طالبت( ِ) برابط التحقق من حسابك( ِ) قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني خلال ${hr} ساعة أو ساعات`,
       VERIFIED_ACCOUNT: "تم التحقق من حسابك( ِ) قبل الآن",
       VERIFICATION_URL: "إن رابط التحقق من الحساب الذي تم إدخاله غير صحيح",
       EXPIRED_VERIFICATION_URL: "إن رابط التحقق من حسابك( ِ) منتهي الصلاحية",
       INEXISTENT_VERIFICATION_REQUEST:
         "أنت( ِ) لم تقم(ي) بطلب رابط التحقق من الحساب قبل الآن",
+      FAILED_MAIL:
+        "فشلت عملية إرسال البريد الإلكتروني، رجاءً حاول مرة أخرى لاحقًا",
+      REQUESTED_PASSWORD_RESET: (hr) =>
+        `لقد طالبت( ِ) برابط إعادة تعيين كلمة المرور قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني خلال ${hr} ساعة أو ساعات`,
+      PASSWORD_RESET_NOT_REQUESTABLE: (hr) =>
+      `لا يمكنك( ِ) طلب تعيين كلمة المرور إلا بعد مرور ${hr} ساعة أو ساعات`,
+      UNVERIFIED_ACCOUNT:
+        "لم يتم التحقق من حسابك( ِ) من قبل، رجاءً قم(ي) بالتحقق من الحساب قبل إعادة/طلب إعادة تعيين كلمة المرور",
+      PASSWORD_RESET_URL:
+        "إن رابط إعادة تعيين كلمة المرور الذي تم إدخاله غير صحيح",
+      EXPIRED_PASSWORD_RESET_URL:
+        "إن رابط إعادة تعيين كلمة المرور منتهي الصلاحية",
+      INEXISTENT_PASSWORD_RESET_REQUEST:
+        "أنت( ِ) لم تقم(ي) بطلب رابط إعادة تعيين كلمة المرور قبل الآن",
       USER_TYPE_ID: "نوع حساب المستخدم غير صالح",
       USERS_LIST: "ليست لديك( ِ) الصلاحية للحصول على اللائحة بالمستخدمين",
       USER_CREATION: "ليست لديك( ِ) الصلاحية لإضافة حساب المستخدم",
@@ -124,6 +151,8 @@ const MESSAGES = {
       SUCCESSFULL_LOCATION_CHANGE: "تم تعديل موقع المستخدم إلى ",
       SUCCESSFULL_VERIFICATION_URL_REQUEST: `تم طلب رابط التحقق من حسابك( ِ) بنجاح
       رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
+      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST: `تم طلب رابط إعادة تعيين كلمة مرورك( ِ) بنجاح
+      رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 24 ساعة`,
       SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
     },
     LOCATION: {

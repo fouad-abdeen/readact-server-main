@@ -25,24 +25,17 @@ const generateAccessToken = require("../Helpers/jwtTokenGenerator");
 // JWT Decoder for Account Verification and Password Reset
 const decodeToken = require("../Helpers/jwtTokenDecoder");
 
+// Email Sender for Account Verification and Password Reset
+const sendMail = require("../Helpers/emailSender");
+
 // Difference Between Now and a Certain Date in Hours
 const getHoursDifference = require("../Helpers/hrsDiffGetter");
-
-// Emails Content (Subject & HTML Body)
-const {
-  verificationEmailEnSubject,
-  verificationEmailArSubject,
-  setEnVerificationEmail,
-  setArVerificationEmail,
-} = require("../Helpers/emailContentSetters");
 // #endregion
-
-// Email Service
-const email = require("../Services/EmailService");
 
 // Mongoose Models
 const UserModel = require("../Models/User");
 const VerificationRequestModel = require("../Models/AccountVerificationRequest");
+const PasswordResetRequestModel = require("../Models/PasswordResetRequest");
 const Locationmodel = require("../Models/Location");
 
 // User Types (Roles) Ids
@@ -95,13 +88,8 @@ class BLC {
   async createUser(req) {
     const { USER } = MESSAGES[this._language];
     const user = req.body;
-    const {
-      user_id,
-      username,
-      password,
-      password_confirmation,
-      user_type_id,
-    } = user;
+    const { user_id, username, password, password_confirmation, user_type_id } =
+      user;
     const admin = await UserModel.findById(user_id).exec();
     const userByUsername = await UserModel.findOne({
       username,
@@ -508,10 +496,10 @@ class BLC {
       if (difference > 48) {
         await VerificationRequestModel.findOneAndRemove({ user_id });
       } else {
-        throw new Error(USER.REQUESTED_VERIFICATION);
+        throw new Error(USER.REQUESTED_VERIFICATION(48 - difference));
       }
     } else if (!isProfileCompleted) {
-      throw new Error(USER.ICOMPLETE_PROFILE);
+      throw new Error(USER.INCOMPLETE_PROFILE);
     } else if (isVerified) {
       throw new Error(USER.VERIFIED_ACCOUNT);
     }
@@ -524,30 +512,14 @@ class BLC {
       JWT_QUERY_STRING +
       token;
 
-    let mailSubject;
-    let mailBody;
-
-    if (this._language === "AR") {
-      mailSubject = verificationEmailArSubject;
-      mailBody = setArVerificationEmail(first_name_ar, email_address, url);
-    } else {
-      mailSubject = verificationEmailEnSubject;
-      mailBody = setEnVerificationEmail(first_name_en, email_address, url);
-    }
-
-    const mailOptions = email.setMailOptions(
+    await sendMail(
+      first_name_ar,
+      first_name_en,
       email_address,
-      mailSubject,
-      mailBody
+      url,
+      this._language,
+      "verification"
     );
-
-    email.transporter.sendMail(mailOptions, (err) => {
-      if (err) {
-        console.log(`Error ${err}`);
-      } else {
-        console.log("Email sent successfully");
-      }
-    });
 
     const date = moment();
 
@@ -555,11 +527,9 @@ class BLC {
       const oDALC = new DALC();
       const status = await oDALC.requestVerification(
         user_id,
-        user_data.email_address,
+        email_address,
         date
       );
-
-      // Send verification URL by email
 
       return status;
     } catch (error) {
@@ -580,11 +550,11 @@ class BLC {
     }
 
     const { user_id } = decodedTokenResult;
-    const verfication_request = await VerificationRequestModel.findOne({
+    const verficationRequest = await VerificationRequestModel.findOne({
       user_id,
     }).exec();
 
-    if (!verfication_request) {
+    if (!verficationRequest) {
       throw new Error(USER.INEXISTENT_VERIFICATION_REQUEST);
     } else {
       const user_data = await UserModel.findById(user_id).exec();
@@ -598,6 +568,132 @@ class BLC {
     try {
       const oDALC = new DALC();
       const status = await oDALC.verifyAccount(user_id);
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async requestPasswordReset(req) {
+    const { USER } = MESSAGES[this._language];
+    const { credential } = req.body;
+    const user_data = await UserModel.findOne({
+      $or: [{ username: credential }, { email_address: credential }],
+    }).exec();
+
+    if (!user_data) throw new Error(USER.CREDENTIAL_CHECK);
+
+    const { first_name_en, first_name_ar, email_address, _id, is_verified } =
+      user_data;
+    const passwordResetRequest = await PasswordResetRequestModel.findOne({
+      user_id: _id,
+    }).exec();
+
+    const isVerified = is_verified;
+    const user_id = _id;
+    let newRequest = true;
+
+    if (!isVerified) {
+      throw new Error(USER.UNVERIFIED_ACCOUNT);
+    } else if (passwordResetRequest && isVerified) {
+      const { request_date } = passwordResetRequest;
+      const difference = getHoursDifference(request_date);
+      newRequest = false;
+
+      if (difference < 24) {
+        throw new Error(USER.REQUESTED_PASSWORD_RESET(24 - difference));
+      } else if (difference < 48) {
+        throw new Error(USER.PASSWORD_RESET_NOT_REQUESTABLE(48 - difference));
+      }
+    }
+
+    const token = await generateAccessToken({ user_id }, 86400);
+    const url =
+      MAIN_URL +
+      this._language.toLowerCase() +
+      ACCOUNT_VERFICATION_ROUTE +
+      JWT_QUERY_STRING +
+      token;
+
+    await sendMail(
+      first_name_ar,
+      first_name_en,
+      email_address,
+      url,
+      this._language,
+      "passwordReset"
+    );
+
+    const completed = false;
+    const date = moment();
+
+    try {
+      const oDALC = new DALC();
+      const status = await oDALC.requestPasswordReset(
+        user_id,
+        completed,
+        date,
+        newRequest
+      );
+
+      return status;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async resetPassword(req) {
+    const { USER } = MESSAGES[this._language];
+    const { token, password, password_confirmation } = req.body;
+    const decodedTokenResult = decodeToken(token);
+    const mockedResult = decodedTokenResult.toString().split(" ");
+
+    if (mockedResult[0] === "invalid" || mockedResult[0] === "Unexpected") {
+      throw new Error(USER.PASSWORD_RESET_URL);
+    } else if (mockedResult[1] === "expired") {
+      throw new Error(USER.EXPIRED_PASSWORD_RESET_URL);
+    }
+
+    const { user_id } = decodedTokenResult;
+    const passwordResetRequest = await PasswordResetRequestModel.findOne({
+      user_id,
+    }).exec();
+    const { completed } = passwordResetRequest;
+
+    if (!passwordResetRequest) {
+      throw new Error(USER.INEXISTENT_PASSWORD_RESET_REQUEST);
+    } else if (completed) {
+      throw new Error(USER.EXPIRED_PASSWORD_RESET_URL);
+    } else {
+      const user_data = await UserModel.findById(user_id).exec();
+      const isVerified = user_data.is_verified;
+      const newPassword = password;
+      const confirmationPassword = password_confirmation;
+      const isStrongPassword = validator.isStrongPassword(newPassword);
+      const isConfirmedPassword =
+        newPassword.length === confirmationPassword.length;
+
+      if (!isVerified) {
+        throw new Error(USER.UNVERIFIED_ACCOUNT);
+      } else if (!isStrongPassword) {
+        throw new Error(USER.PASSWORD);
+      } else if (!isConfirmedPassword) {
+        throw new Error(USER.PASSWORD_CONFIRMATION);
+      } else {
+        const isPasswordTruelyConfirmed = crypto.timingSafeEqual(
+          Buffer.from(newPassword),
+          Buffer.from(confirmationPassword)
+        );
+
+        if (!isPasswordTruelyConfirmed) {
+          throw new Error(USER.PASSWORD_CONFIRMATION);
+        }
+      }
+    }
+
+    try {
+      const oDALC = new DALC();
+      const status = await oDALC.resetPassword(user_id, password);
       return status;
     } catch (error) {
       return error.message;

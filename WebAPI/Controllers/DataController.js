@@ -17,16 +17,14 @@ const {
   CHANGE_PASSWORD,
   REQUEST_VERIFICATION,
   VERIFY_ACCOUNT,
+  REQUEST_PASSWORD_RESET,
+  RESET_PASSWORD,
   GET_USERS_TYPES,
   CHANGE_USER_TYPE,
   CHANGE_LOCATION,
 } = routes.user;
-const {
-  GET_ALL_LOCATIONS,
-  CREATE_LOCATION,
-  EDIT_LOCATION,
-  DELETE_LOCATION,
-} = routes.location;
+const { GET_ALL_LOCATIONS, CREATE_LOCATION, EDIT_LOCATION, DELETE_LOCATION } =
+  routes.location;
 
 // JWT Authorization Middleware
 const jwtAuth = require("../Middlewares/Auth");
@@ -243,6 +241,36 @@ const verifyAccount = async (req, res) => {
     });
   }
 };
+
+const requestPasswordReset = async (req, res) => {
+  const { language } = req.body;
+  try {
+    const oBLC = new BLC();
+    await oBLC.setLanguage(FORMAT_LANG(language));
+    const requestStatus = await oBLC.requestPasswordReset(req);
+    res.send(requestStatus);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while requesting password reset",
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { language } = req.body;
+  try {
+    const oBLC = new BLC();
+    await oBLC.setLanguage(FORMAT_LANG(language));
+    const verificationStatus = await oBLC.resetPassword(req);
+    res.send(verificationStatus);
+  } catch (error) {
+    res.status(500).send({
+      message:
+        error.message || "Some error occured while resetting your password",
+    });
+  }
+};
 // #endregion
 
 // #region Location
@@ -320,6 +348,8 @@ router.delete(`/${DELETE_USER}`, jwtAuth, deleteUser);
 router.put(`/${CHANGE_PASSWORD}`, jwtAuth, changePassword);
 router.post(`/${REQUEST_VERIFICATION}`, jwtAuth, requestVerification);
 router.put(`/${VERIFY_ACCOUNT}`, verifyAccount);
+router.post(`/${REQUEST_PASSWORD_RESET}`, requestPasswordReset);
+router.put(`/${RESET_PASSWORD}`, resetPassword);
 router.get(`/${GET_USERS_TYPES}`, jwtAuth, getAllUsersTypes);
 router.put(`/${CHANGE_USER_TYPE}`, jwtAuth, changeUserType);
 router.put(`/${CHANGE_LOCATION}`, jwtAuth, changeLocation);

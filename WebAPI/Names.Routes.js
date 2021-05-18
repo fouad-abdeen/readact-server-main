@@ -11,6 +11,8 @@ const routes = {
     CHANGE_PASSWORD: "changePassword",
     REQUEST_VERIFICATION: "requestAccountVerification",
     VERIFY_ACCOUNT: "verifyAccount",
+    REQUEST_PASSWORD_RESET: "requestPasswordReset",
+    RESET_PASSWORD: "resetPassword",
     GET_USERS_TYPES: "getAllUserTypes",
     CHANGE_USER_TYPE: "changeUserType",
     CHANGE_LOCATION: "changeLocation",

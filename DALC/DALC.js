@@ -6,6 +6,7 @@ const UserModel = require("../Models/User");
 const UserTypeModel = require("../Models/UserType");
 const LocationModel = require("../Models/Location");
 const VerificationRequestModel = require("../Models/AccountVerificationRequest");
+const PasswordResetRequestModel = require("../Models/PasswordResetRequest");
 
 // Messages
 const MESSAGES = require("../Messages/Messages");
@@ -123,9 +124,7 @@ class DALC {
   async editUser(_id, user) {
     const { USER } = MESSAGES[this._language];
     try {
-      await UserModel.findByIdAndUpdate({ _id }, user, {
-        new: true,
-      });
+      await UserModel.findByIdAndUpdate({ _id }, user);
       return USER.SUCCESSFULL_UPDATE;
     } catch (error) {
       return error.message;
@@ -171,6 +170,48 @@ class DALC {
       return error.message;
     }
   }
+
+  async requestPasswordReset(user_id, completed, request_date, newRequest) {
+    const { USER } = MESSAGES[this._language];
+    try {
+      if (newRequest) {
+        const PasswordResetRequest = new PasswordResetRequestModel({
+          user_id,
+          completed,
+          request_date,
+        });
+        await PasswordResetRequest.save();
+      } else {
+        await PasswordResetRequestModel.findOneAndUpdate(
+          { user_id },
+          { completed, request_date }
+        );
+      }
+
+      return USER.SUCCESSFULL_PASSWORD_RESET_URL_REQUEST;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  async resetPassword(_id, password) {
+    const { USER } = MESSAGES[this._language];
+    try {
+      const newPassword = new UserModel();
+      newPassword.setPassword(password);
+      const { salt, hash } = newPassword;
+      await UserModel.findByIdAndUpdate({ _id }, { salt, hash });
+
+      await PasswordResetRequestModel.findOneAndUpdate(
+        { user_id: _id },
+        { completed: true }
+      );
+
+      return USER.SUCCESSFULL_PASSWORD_CHANGE;
+    } catch (error) {
+      return error.message;
+    }
+  }
   // #endregion
 
   // #region Location
@@ -196,9 +237,7 @@ class DALC {
   async editLocation(_id, location) {
     const { LOCATION } = MESSAGES[this._language];
     try {
-      await UserModel.findByIdAndUpdate({ _id }, location, {
-        new: true,
-      });
+      await UserModel.findByIdAndUpdate({ _id }, location);
       return LOCATION.SUCCESSFULL_UPDATE;
     } catch (error) {
       return error.message;
