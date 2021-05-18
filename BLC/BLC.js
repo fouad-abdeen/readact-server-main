@@ -15,6 +15,7 @@ const LANGUAGE = require("../Messages/Language");
 const {
   MAIN_URL,
   ACCOUNT_VERFICATION_ROUTE,
+  PASSWORD_RESET_ROUTE,
   JWT_QUERY_STRING,
 } = require("../Config/client");
 
@@ -611,7 +612,7 @@ class BLC {
     const url =
       MAIN_URL +
       this._language.toLowerCase() +
-      ACCOUNT_VERFICATION_ROUTE +
+      PASSWORD_RESET_ROUTE +
       JWT_QUERY_STRING +
       token;
 
