@@ -113,7 +113,7 @@ const MESSAGES = {
       REQUESTED_PASSWORD_RESET: (hr) =>
         `لقد طالبت( ِ) برابط إعادة تعيين كلمة المرور قبل الآن، رجاءً تفقد(ي) صندوق بريدك( ِ) الإلكتروني خلال ${hr} ساعة أو ساعات`,
       PASSWORD_RESET_NOT_REQUESTABLE: (hr) =>
-      `لا يمكنك( ِ) طلب تعيين كلمة المرور إلا بعد مرور ${hr} ساعة أو ساعات`,
+        `لا يمكنك( ِ) طلب تعيين كلمة المرور إلا بعد مرور ${hr} ساعة أو ساعات`,
       UNVERIFIED_ACCOUNT:
         "لم يتم التحقق من حسابك( ِ) من قبل، رجاءً قم(ي) بالتحقق من الحساب قبل إعادة/طلب إعادة تعيين كلمة المرور",
       PASSWORD_RESET_URL:
@@ -169,6 +169,14 @@ const MESSAGES = {
       SUCCESSFULL_DELETION: "تم حذف الموقع بنجاح",
     },
   },
+  FAILURE: (message) => ({
+    message,
+    status: "failure",
+  }),
+  SUCCESS: (message) => ({
+    message,
+    status: "success",
+  }),
 };
 
 module.exports = MESSAGES;
