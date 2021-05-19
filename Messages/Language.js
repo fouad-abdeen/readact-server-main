@@ -1,6 +1,6 @@
 class Language {
-  constructor(language) {
-    this._language = language;
+  constructor() {
+    this._language = "EN";
   }
 
   init(lan) {
