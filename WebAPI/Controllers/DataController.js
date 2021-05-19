@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-// Names of Routes
+// #region Names of Routes
 const routes = require("../Names.Routes");
 
 const {
@@ -25,6 +25,7 @@ const {
 } = routes.user;
 const { GET_ALL_LOCATIONS, CREATE_LOCATION, EDIT_LOCATION, DELETE_LOCATION } =
   routes.location;
+// #endregion
 
 // JWT Authorization Middleware
 const jwtAuth = require("../Middlewares/Auth");
@@ -32,11 +33,16 @@ const jwtAuth = require("../Middlewares/Auth");
 // Business Logic Component
 const BLC = require("../../BLC/BLC");
 
+// Messages
+const { FAILURE, SUCCESS } = require("../../Messages/Messages");
+
+// #region Helpers
 // Custom Code Generator
 const GENERATE_CODE = require("../../Helpers/customCodeGenerator");
 
 // Language String Formatter
 const FORMAT_LANG = require("../../Helpers/langStringFormatter");
+// #endregion
 
 // #region Controllers
 
@@ -47,11 +53,14 @@ const getAllUsersTypes = async (req, res) => {
     const userTypes = await oBLC.getAllUsersTypes();
     res.send(userTypes);
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message ||
-        "Some error occured while retrieving User account's types",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message ||
+            "Some error occured while retrieving User account's types"
+        )
+      );
   }
 };
 
@@ -64,9 +73,11 @@ const getSomeUsers = async (req, res) => {
     const users = await oBLC.getSomeUsers(req);
     res.send(users);
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while retrieving Users",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(error.message || "Some error occured while retrieving Users")
+      );
   }
 };
 
@@ -76,12 +87,15 @@ const createUser = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.createUser(req);
-    res.send(userStatus);
+    res.send(SUCCESS(userStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while creating the User account",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while creating the User account"
+        )
+      );
   }
 };
 
@@ -91,12 +105,15 @@ const deleteUser = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.deleteUser(req);
-    res.send(userStatus);
+    res.send(SUCCESS(userStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while deleting the User account",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while deleting the User account"
+        )
+      );
   }
 };
 
@@ -106,13 +123,16 @@ const changeUserType = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const status = await oBLC.changeUserType(req);
-    res.send(status);
+    res.send(SUCCESS(status));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message ||
-        "Some error occured while changing User account's type",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message ||
+            "Some error occured while changing User account's type"
+        )
+      );
   }
 };
 
@@ -122,12 +142,15 @@ const changeLocation = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const status = await oBLC.changeLocation(req);
-    res.send(status);
+    res.send(SUCCESS(status));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while changing User's location",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while changing User's location"
+        )
+      );
   }
 };
 // #endregion
@@ -137,12 +160,12 @@ const authenticateUser = async (req, res) => {
   try {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
-    const user = await oBLC.authenticateUser(req);
-    res.send(user);
+    const token = await oBLC.authenticateUser(req);
+    res.send({ token });
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while logging in",
-    });
+    res
+      .status(500)
+      .send(FAILURE(error.message || "Some error occured while logging in"));
   }
 };
 
@@ -152,9 +175,11 @@ const getAllUsers = async (req, res) => {
     const users = await oBLC.getAllUsers();
     res.send(users);
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while retrieving Users",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(error.message || "Some error occured while retrieving Users")
+      );
   }
 };
 
@@ -164,9 +189,11 @@ const getUsersByLocation = async (req, res) => {
     const users = await oBLC.getUsersByLocation(req);
     res.send(users);
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while retrieving Users",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(error.message || "Some error occured while retrieving Users")
+      );
   }
 };
 
@@ -176,9 +203,13 @@ const getUser = async (req, res) => {
     const user = await oBLC.getUser(req);
     res.send(user);
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while retrieving your data",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while retrieving your data"
+        )
+      );
   }
 };
 
@@ -188,11 +219,13 @@ const editUser = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.editUser(req);
-    res.send(userStatus);
+    res.send(SUCCESS(userStatus));
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while updating your data",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(error.message || "Some error occured while updating your data")
+      );
   }
 };
 
@@ -202,12 +235,15 @@ const changePassword = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const passwordStatus = await oBLC.changePassword(req);
-    res.send(passwordStatus);
+    res.send(SUCCESS(passwordStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while changing your password",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while changing your password"
+        )
+      );
   }
 };
 
@@ -217,13 +253,16 @@ const requestVerification = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const requestStatus = await oBLC.requestVerification(req);
-    res.send(requestStatus);
+    res.send(SUCCESS(requestStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message ||
-        "Some error occured while requesting your account verification URL",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message ||
+            "Some error occured while requesting your account verification URL"
+        )
+      );
   }
 };
 
@@ -233,12 +272,15 @@ const verifyAccount = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const verificationStatus = await oBLC.verifyAccount(req);
-    res.send(verificationStatus);
+    res.send(SUCCESS(verificationStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while verifiying your account",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while verifiying your account"
+        )
+      );
   }
 };
 
@@ -248,12 +290,15 @@ const requestPasswordReset = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const requestStatus = await oBLC.requestPasswordReset(req);
-    res.send(requestStatus);
+    res.send(SUCCESS(requestStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while requesting password reset",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while requesting password reset"
+        )
+      );
   }
 };
 
@@ -263,12 +308,15 @@ const resetPassword = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const verificationStatus = await oBLC.resetPassword(req);
-    res.send(verificationStatus);
+    res.send(SUCCESS(verificationStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while resetting your password",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while resetting your password"
+        )
+      );
   }
 };
 // #endregion
@@ -280,9 +328,13 @@ const getAllLocations = async (req, res) => {
     const locations = await oBLC.getAllLocations();
     res.send(locations);
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while retrieving Locations",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while retrieving Locations"
+        )
+      );
   }
 };
 
@@ -292,12 +344,15 @@ const createLocation = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.createLocation(req);
-    res.send(locationStatus);
+    res.send(SUCCESS(locationStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while creating the new location",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while creating the new location"
+        )
+      );
   }
 };
 
@@ -307,12 +362,15 @@ const editLocation = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.editLocation(req);
-    res.send(locationStatus);
+    res.send(SUCCESS(locationStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while updating location's data",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while updating location's data"
+        )
+      );
   }
 };
 
@@ -322,12 +380,15 @@ const deleteLocation = async (req, res) => {
     const oBLC = new BLC();
     await oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.deleteLocation(req);
-    res.send(locationStatus);
+    res.send(SUCCESS(locationStatus));
   } catch (error) {
-    res.status(500).send({
-      message:
-        error.message || "Some error occured while deleting the location",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(
+          error.message || "Some error occured while deleting the location"
+        )
+      );
   }
 };
 // #endregion
@@ -368,11 +429,13 @@ router.get(`/${routes.GENERATE_CODE}`, (req, res) => {
   const code = GENERATE_CODE(firstName, lastName);
 
   try {
-    res.send(code);
+    res.send({ code });
   } catch (error) {
-    res.status(500).send({
-      message: error.message || "Some error occured while generating the code",
-    });
+    res
+      .status(500)
+      .send(
+        FAILURE(error.message || "Some error occured while generating the code")
+      );
   }
 });
 // #endregion
