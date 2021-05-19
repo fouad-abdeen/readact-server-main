@@ -28,9 +28,7 @@ const generateCode = (firstName, lastName) => {
 
     return codeChars.join("");
   } catch (error) {
-    return {
-      message: error.message || "Some error occured while generating the code",
-    };
+    return error.message;
   }
 };
 
