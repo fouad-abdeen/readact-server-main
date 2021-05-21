@@ -11,13 +11,15 @@ const DALC = require("../DALC/DALC");
 const MESSAGES = require("../Messages/Messages");
 const LANGUAGE = require("../Messages/Language");
 
-// Client Url Parts
+// #region Configuration
+// Client URL Parts
 const {
   MAIN_URL,
   ACCOUNT_VERFICATION_ROUTE,
   PASSWORD_RESET_ROUTE,
   JWT_QUERY_STRING,
 } = require("../Config/client");
+// #endregion
 
 // #region Helpers
 // JWT Token Generator for Authorization
@@ -33,23 +35,24 @@ const sendMail = require("../Helpers/emailSender");
 const getHoursDifference = require("../Helpers/hrsDiffGetter");
 // #endregion
 
-// Mongoose Models
+// #region Mongoose Models
 const UserModel = require("../Models/User");
 const VerificationRequestModel = require("../Models/AccountVerificationRequest");
 const PasswordResetRequestModel = require("../Models/PasswordResetRequest");
 const Locationmodel = require("../Models/Location");
+// #endregion
 
-// User Types (Roles) Ids
+// Ids of User Types (Roles)
 const ID = require("./UserTypes");
 
 class BLC {
-  constructor(language) {
-    this._language = language;
+  constructor() {
+    this.language = LANGUAGE.getLanguage();
   }
 
   setLanguage(lan) {
     LANGUAGE.init(lan);
-    this._language = LANGUAGE.getLanguage();
+    this.language = LANGUAGE.getLanguage();
   }
 
   //  #region User
@@ -66,7 +69,7 @@ class BLC {
 
   // #region Admin Privileges
   async getSomeUsers(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { user_id } = req.body;
     const admin = await UserModel.findById(user_id).exec();
 
@@ -87,7 +90,7 @@ class BLC {
   }
 
   async createUser(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const user = req.body;
     const { user_id, username, password, password_confirmation, user_type_id } =
       user;
@@ -140,7 +143,7 @@ class BLC {
   }
 
   async deleteUser(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { user_id, _id } = req.body;
     const admin = await UserModel.findById(user_id).exec();
     const user = await UserModel.findById(_id).exec();
@@ -163,7 +166,7 @@ class BLC {
   }
 
   async changeUserType(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const user = req.body;
     const new_user_type = user.user_type_id;
     const admin = await UserModel.findById(user.user_id).exec();
@@ -206,7 +209,7 @@ class BLC {
   }
 
   async changeLocation(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { user_id, _id, location_id } = req.body;
     const admin = await UserModel.findById(user_id).exec();
     const user = await UserModel.findById(_id).exec();
@@ -240,7 +243,7 @@ class BLC {
   // #endregion
 
   async authenticateUser(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const provided_data = req.body;
     const { credential, password } = provided_data;
     const user_data = await UserModel.findOne({
@@ -328,7 +331,7 @@ class BLC {
   }
 
   async editUser(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const currentUser = req.body;
     const _id = currentUser.user_id;
     const {
@@ -433,7 +436,7 @@ class BLC {
   }
 
   async changePassword(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const currentUser = req.body;
     const { user_id } = currentUser;
     const oldPassword = currentUser.password_check;
@@ -478,7 +481,7 @@ class BLC {
   }
 
   async requestVerification(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { user_id } = req.body;
     const user_data = await UserModel.findById(user_id).exec();
     const { first_name_en, first_name_ar, email_address } = user_data;
@@ -508,7 +511,7 @@ class BLC {
     const token = await generateAccessToken({ user_id }, 172800);
     const url =
       MAIN_URL +
-      this._language.toLowerCase() +
+      this.language.toLowerCase() +
       ACCOUNT_VERFICATION_ROUTE +
       JWT_QUERY_STRING +
       token;
@@ -518,7 +521,7 @@ class BLC {
       first_name_en,
       email_address,
       url,
-      this._language,
+      this.language,
       "verification"
     );
 
@@ -539,7 +542,7 @@ class BLC {
   }
 
   async verifyAccount(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { token } = req.body;
     const decodedTokenResult = decodeToken(token);
     const mockedResult = decodedTokenResult.toString().split(" ");
@@ -576,7 +579,7 @@ class BLC {
   }
 
   async requestPasswordReset(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { credential } = req.body;
     const user_data = await UserModel.findOne({
       $or: [{ username: credential }, { email_address: credential }],
@@ -611,7 +614,7 @@ class BLC {
     const token = await generateAccessToken({ user_id }, 86400);
     const url =
       MAIN_URL +
-      this._language.toLowerCase() +
+      this.language.toLowerCase() +
       PASSWORD_RESET_ROUTE +
       JWT_QUERY_STRING +
       token;
@@ -621,7 +624,7 @@ class BLC {
       first_name_en,
       email_address,
       url,
-      this._language,
+      this.language,
       "passwordReset"
     );
 
@@ -644,7 +647,7 @@ class BLC {
   }
 
   async resetPassword(req) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const { token, password, password_confirmation } = req.body;
     const decodedTokenResult = decodeToken(token);
     const mockedResult = decodedTokenResult.toString().split(" ");
@@ -715,7 +718,7 @@ class BLC {
   }
 
   async createLocation(req) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     const location = req.body;
     const { user_id, title_en, title_ar } = location;
     const admin = await UserModel.findById(user_id).exec();
@@ -749,7 +752,7 @@ class BLC {
   }
 
   async editLocation(req) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     const location = req.body;
     const { user_id, _id, title_en, title_ar } = location;
     const admin = await UserModel.findById(user_id).exec();
@@ -778,7 +781,7 @@ class BLC {
   }
 
   async deleteLocation(req) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     const location = req.body;
     const { user_id, _id } = location;
     const admin = await UserModel.findById(user_id).exec();

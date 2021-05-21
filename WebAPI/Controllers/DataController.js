@@ -69,7 +69,7 @@ const getSomeUsers = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const users = await oBLC.getSomeUsers(req);
     res.send(users);
   } catch (error) {
@@ -85,7 +85,7 @@ const createUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.createUser(req);
     res.send(SUCCESS(userStatus));
   } catch (error) {
@@ -103,7 +103,7 @@ const deleteUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.deleteUser(req);
     res.send(SUCCESS(userStatus));
   } catch (error) {
@@ -121,7 +121,7 @@ const changeUserType = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const status = await oBLC.changeUserType(req);
     res.send(SUCCESS(status));
   } catch (error) {
@@ -140,7 +140,7 @@ const changeLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const status = await oBLC.changeLocation(req);
     res.send(SUCCESS(status));
   } catch (error) {
@@ -159,7 +159,7 @@ const authenticateUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const token = await oBLC.authenticateUser(req);
     res.send({ token });
   } catch (error) {
@@ -217,7 +217,7 @@ const editUser = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const userStatus = await oBLC.editUser(req);
     res.send(SUCCESS(userStatus));
   } catch (error) {
@@ -233,7 +233,7 @@ const changePassword = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const passwordStatus = await oBLC.changePassword(req);
     res.send(SUCCESS(passwordStatus));
   } catch (error) {
@@ -251,7 +251,7 @@ const requestVerification = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const requestStatus = await oBLC.requestVerification(req);
     res.send(SUCCESS(requestStatus));
   } catch (error) {
@@ -270,7 +270,7 @@ const verifyAccount = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const verificationStatus = await oBLC.verifyAccount(req);
     res.send(SUCCESS(verificationStatus));
   } catch (error) {
@@ -288,7 +288,7 @@ const requestPasswordReset = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const requestStatus = await oBLC.requestPasswordReset(req);
     res.send(SUCCESS(requestStatus));
   } catch (error) {
@@ -306,7 +306,7 @@ const resetPassword = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const verificationStatus = await oBLC.resetPassword(req);
     res.send(SUCCESS(verificationStatus));
   } catch (error) {
@@ -342,7 +342,7 @@ const createLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.createLocation(req);
     res.send(SUCCESS(locationStatus));
   } catch (error) {
@@ -360,7 +360,7 @@ const editLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.editLocation(req);
     res.send(SUCCESS(locationStatus));
   } catch (error) {
@@ -378,7 +378,7 @@ const deleteLocation = async (req, res) => {
   const { language } = req.body;
   try {
     const oBLC = new BLC();
-    await oBLC.setLanguage(FORMAT_LANG(language));
+    if (language) oBLC.setLanguage(FORMAT_LANG(language));
     const locationStatus = await oBLC.deleteLocation(req);
     res.send(SUCCESS(locationStatus));
   } catch (error) {

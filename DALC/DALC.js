@@ -1,25 +1,21 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable camelcase */
 
-// Mongoose Models
+// Messages
+const MESSAGES = require("../Messages/Messages");
+const LANGUAGE = require("../Messages/Language");
+
+// #region Mongoose Models
 const UserModel = require("../Models/User");
 const UserTypeModel = require("../Models/UserType");
 const LocationModel = require("../Models/Location");
 const VerificationRequestModel = require("../Models/AccountVerificationRequest");
 const PasswordResetRequestModel = require("../Models/PasswordResetRequest");
-
-// Messages
-const MESSAGES = require("../Messages/Messages");
-const LANGUAGE = require("../Messages/Language");
+// #endregion
 
 class DALC {
-  constructor(language) {
-    this._language = language;
-    this.setLanguage();
-  }
-
-  setLanguage() {
-    this._language = LANGUAGE.getLanguage();
+  constructor() {
+    this.language = LANGUAGE.getLanguage();
   }
 
   // #region User
@@ -41,7 +37,7 @@ class DALC {
 
   // #region Admin Privileges
   async createUser(user, password) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       const newUser = new UserModel(user);
       newUser.setPassword(password);
@@ -53,7 +49,7 @@ class DALC {
   }
 
   async deleteUser(_id) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       const user = await UserModel.findOneAndRemove({ _id });
       return user.username + USER.SUCCESSFULL_DELETION;
@@ -63,13 +59,13 @@ class DALC {
   }
 
   async changeUserType(_id, user_type_id) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const UserType = await UserTypeModel.findOne({
       custom_id: user_type_id,
     }).exec();
     let USER_TYPE_TITLE;
 
-    if (this._language === "AR") {
+    if (this.language === "AR") {
       USER_TYPE_TITLE = UserType.title_ar;
     } else {
       USER_TYPE_TITLE = UserType.title_en;
@@ -84,13 +80,13 @@ class DALC {
   }
 
   async changeLocation(_id, location_id) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     const Location = await LocationModel.findById({
       _id: location_id,
     }).exec();
     let LOCATION_TITLE;
 
-    if (this._language === "AR") {
+    if (this.language === "AR") {
       LOCATION_TITLE = Location.title_ar;
     } else {
       LOCATION_TITLE = Location.title_en;
@@ -122,7 +118,7 @@ class DALC {
   }
 
   async editUser(_id, user) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       await UserModel.findByIdAndUpdate({ _id }, user);
       return USER.SUCCESSFULL_UPDATE;
@@ -132,7 +128,7 @@ class DALC {
   }
 
   async changePassword(_id, password) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       const newPassword = new UserModel();
       newPassword.setPassword(password);
@@ -145,7 +141,7 @@ class DALC {
   }
 
   async requestVerification(user_id, email_address, request_date) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       const VerificationRequestDoc = new VerificationRequestModel({
         user_id,
@@ -161,7 +157,7 @@ class DALC {
   }
 
   async verifyAccount(_id) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       await UserModel.findByIdAndUpdate({ _id }, { is_verified: true });
 
@@ -172,7 +168,7 @@ class DALC {
   }
 
   async requestPasswordReset(user_id, completed, request_date, newRequest) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       if (newRequest) {
         const PasswordResetRequest = new PasswordResetRequestModel({
@@ -195,7 +191,7 @@ class DALC {
   }
 
   async resetPassword(_id, password) {
-    const { USER } = MESSAGES[this._language];
+    const { USER } = MESSAGES[this.language];
     try {
       const newPassword = new UserModel();
       newPassword.setPassword(password);
@@ -224,7 +220,7 @@ class DALC {
   }
 
   async createLocation(location) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     try {
       const newLocation = new LocationModel(location);
       await newLocation.save();
@@ -235,7 +231,7 @@ class DALC {
   }
 
   async editLocation(_id, location) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     try {
       await UserModel.findByIdAndUpdate({ _id }, location);
       return LOCATION.SUCCESSFULL_UPDATE;
@@ -245,7 +241,7 @@ class DALC {
   }
 
   async deleteLocation(_id) {
-    const { LOCATION } = MESSAGES[this._language];
+    const { LOCATION } = MESSAGES[this.language];
     try {
       await LocationModel.findOneAndRemove({ _id });
       return LOCATION.SUCCESSFULL_DELETION;

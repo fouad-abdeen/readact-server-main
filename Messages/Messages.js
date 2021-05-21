@@ -65,10 +65,10 @@ const MESSAGES = {
       SUCCESSFULL_USER_TYPE_CHANGE:
         "User account's type changed successfully to ",
       SUCCESSFULL_LOCATION_CHANGE: "User's location changed successfully to ",
-      SUCCESSFULL_VERIFICATION_URL_REQUEST: `Your account verification URL has been successfully requested.
-      Please check your email inbox within 48 hours.`,
-      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST: `Your password reset URL has been successfully requested.
-      Please check your email inbox within 24 hours.`,
+      SUCCESSFULL_VERIFICATION_URL_REQUEST:
+        "Your account verification URL has been successfully requested. Please check your email inbox within 48 hours.",
+      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST:
+        "Your password reset URL has been successfully requested. Please check your email inbox within 24 hours.",
       SUCCESSFULL_ACCOUNT_VERIFICATION:
         "Your account is verified successfully.",
     },
@@ -149,10 +149,10 @@ const MESSAGES = {
       SUCCESSFULL_DELETION: " تمت بنجاح عملبة حذف حساب",
       SUCCESSFULL_USER_TYPE_CHANGE: "تم تعديل نوع حساب المستخدم بنجاح إلى ",
       SUCCESSFULL_LOCATION_CHANGE: "تم تعديل موقع المستخدم إلى ",
-      SUCCESSFULL_VERIFICATION_URL_REQUEST: `تم طلب رابط التحقق من حسابك( ِ) بنجاح
-      رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة`,
-      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST: `تم طلب رابط إعادة تعيين كلمة مرورك( ِ) بنجاح
-      رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 24 ساعة`,
+      SUCCESSFULL_VERIFICATION_URL_REQUEST:
+        "تم طلب رابط التحقق من حسابك( ِ) بنجاح، رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 48 ساعة",
+      SUCCESSFULL_PASSWORD_RESET_URL_REQUEST:
+        "تم طلب رابط إعادة تعيين كلمة مرورك( ِ) بنجاح، رجاءً قم(ي) بتفقد صندوق بريدك( ِ) الإلكتروني خلال 24 ساعة",
       SUCCESSFULL_ACCOUNT_VERIFICATION: "تم التحقق من حسابك( ِ) بنجاح",
     },
     LOCATION: {

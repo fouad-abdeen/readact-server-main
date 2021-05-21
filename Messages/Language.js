@@ -1,14 +1,16 @@
+const { DEFAULT_LANGUAGE } = require("../Config/client");
+
 class Language {
   constructor() {
-    this._language = "EN";
+    this.language = DEFAULT_LANGUAGE;
   }
 
   init(lan) {
-    this._language = lan;
+    this.language = lan;
   }
 
   getLanguage() {
-    return this._language;
+    return this.language;
   }
 }
 

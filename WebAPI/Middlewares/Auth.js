@@ -2,6 +2,9 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
+// Helpers
+const FORMAT_LANG = require("../../Helpers/langStringFormatter");
+
 // Messages
 const MESSAGES = require("../../Messages/Messages");
 const LANGUAGE = require("../../Messages/Language");
@@ -10,7 +13,7 @@ const SECRET = process.env.TOKEN_SECRET;
 
 const authorize = (req, res, next) => {
   const { language } = req.body;
-  LANGUAGE.init(language.toUpperCase());
+  if (language) LANGUAGE.init(FORMAT_LANG(language));
   const LAN = LANGUAGE.getLanguage();
   const { USER } = MESSAGES[LAN];
 
@@ -21,7 +24,7 @@ const authorize = (req, res, next) => {
     next();
   } catch (error) {
     console.error(error.message);
-    res.status(401).send({ message: USER.UNAUTHORIZED });
+    res.status(401).send(MESSAGES.FAILURE(USER.UNAUTHORIZED));
   }
 };
 
